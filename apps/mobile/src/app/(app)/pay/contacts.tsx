@@ -33,7 +33,7 @@ export default function PayToContactsScreen() {
   const contacts = useQuery({ queryKey: ['deviceContacts'], queryFn: loadContacts, staleTime: 60_000 });
   const [query, setQuery] = useState('');
   const [checking, setChecking] = useState(false);
-  const [notOnEchoPay, setNotOnEchoPay] = useState(false);
+  const [notOnTunePay, setNotOnTunePay] = useState(false);
   const [payee, setPayee] = useState<DeviceContact | null>(null);
   const [paid, setPaid] = useState<{ name: string; amount: number } | null>(null);
 
@@ -43,12 +43,12 @@ export default function PayToContactsScreen() {
   );
 
   const onContactPress = async (contact: DeviceContact) => {
-    if (!contact.phone) return setNotOnEchoPay(true);
+    if (!contact.phone) return setNotOnTunePay(true);
     setChecking(true);
     const exists = await hasAccount(localPhone(contact.phone));
     setChecking(false);
     if (exists) setPayee(contact);
-    else setNotOnEchoPay(true);
+    else setNotOnTunePay(true);
   };
 
   return (
@@ -125,12 +125,12 @@ export default function PayToContactsScreen() {
         </View>
       </Modal>
 
-      <AppDialog visible={notOnEchoPay} onClose={() => setNotOnEchoPay(false)}>
+      <AppDialog visible={notOnTunePay} onClose={() => setNotOnTunePay(false)}>
         <View style={styles.infoIcon}>
           <Icon name="info-outline" size={28} color={Colors.primary} />
         </View>
         <AppText style={[Type.body(15, 600), styles.infoText]}>No UPI account found for this contact.</AppText>
-        <AppButton label="OK" onPress={() => setNotOnEchoPay(false)} style={styles.stretch} />
+        <AppButton label="OK" onPress={() => setNotOnTunePay(false)} style={styles.stretch} />
       </AppDialog>
 
       {payee && (

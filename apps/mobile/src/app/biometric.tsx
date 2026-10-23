@@ -31,7 +31,7 @@ export default function BiometricScreen() {
   const unlock = async () => {
     setBusy(true);
     setStatus('Authenticating');
-    const outcome = await authenticate('Authenticate to access EchoPay');
+    const outcome = await authenticate('Authenticate to access TunePay');
     if (outcome === 'success') {
       setStatus('Welcome back');
       setTimeout(() => setUnlocked(true), 300);
@@ -52,7 +52,7 @@ export default function BiometricScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <AppText style={Type.heading(22)}>EchoPay</AppText>
+      <AppText style={Type.heading(22)}>TunePay</AppText>
       <View style={styles.flex} />
       <Animated.View style={[styles.logoBox, pulseStyle]}>
         <AppLogo type="icon" width={88} height={88} />

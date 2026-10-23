@@ -40,7 +40,7 @@ export default function SecurityScreen() {
           <View style={styles.flex}>
             <AppText style={Type.heading(14)}>Your PIN stays with your bank</AppText>
             <AppText style={[Type.body(13, 500, Colors.textSecondary), styles.noteText]}>
-              EchoPay never asks for or stores your UPI PIN. With the biometric lock on, the app asks for your fingerprint,
+              TunePay never asks for or stores your UPI PIN. With the biometric lock on, the app asks for your fingerprint,
               face or device PIN on launch and before voice payments.
             </AppText>
           </View>

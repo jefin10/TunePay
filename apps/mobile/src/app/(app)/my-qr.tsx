@@ -29,7 +29,7 @@ export default function MyQrScreen() {
   const share = async () => {
     try {
       if (!(await Sharing.isAvailableAsync())) return toast('Sharing is not available on this device', 'error');
-      await Sharing.shareAsync(await capture(), { mimeType: 'image/png', dialogTitle: 'Share my EchoPay QR' });
+      await Sharing.shareAsync(await capture(), { mimeType: 'image/png', dialogTitle: 'Share my TunePay QR' });
     } catch {
       toast('Could not share the QR code', 'error');
     }
