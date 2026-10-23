@@ -13,33 +13,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "EchoPay",
+  title: "TunePay",
   description:
-    "EchoPay is a voice-powered UPI payments platform for fast, secure, and accessible money transfers.",
-  applicationName: "EchoPay",
+    "TunePay is a voice-powered UPI payments platform for fast, secure, and accessible money transfers.",
+  applicationName: "TunePay",
   icons: {
     icon: [{ url: "/symbol-logo.png", type: "image/png" }],
     shortcut: [{ url: "/symbol-logo.png", type: "image/png" }],
     apple: [{ url: "/symbol-logo.png", type: "image/png" }],
   },
   openGraph: {
-    title: "EchoPay",
+    title: "TunePay",
     description:
       "Voice-powered UPI payments for fast, secure, and accessible money transfers.",
-    siteName: "EchoPay",
+    siteName: "TunePay",
     type: "website",
     images: [
       {
         url: "/symbol-logo.png",
         width: 512,
         height: 512,
-        alt: "EchoPay symbol logo",
+        alt: "TunePay symbol logo",
       },
     ],
   },
   twitter: {
     card: "summary",
-    title: "EchoPay",
+    title: "TunePay",
     description:
       "Voice-powered UPI payments for fast, secure, and accessible money transfers.",
     images: ["/symbol-logo.png"],

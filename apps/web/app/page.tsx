@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const apkDownloadUrl = "https://github.com/jefin10/EchoPay/releases/latest/download/app-release.apk";
+  const apkDownloadUrl = "https://github.com/jefin10/TunePay/releases/latest/download/app-release.apk";
 
   return (
     <div className="min-h-screen bg-white">
@@ -16,18 +16,18 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <Image
                 src="/symbol-logo.png"
-                alt="EchoPay Logo"
+                alt="TunePay Logo"
                 width={32}
                 height={32}
                 className="w-8 h-8"
               />
-              <span className="text-xl font-semibold text-gray-900">EchoPay</span>
+              <span className="text-xl font-semibold text-gray-900">TunePay</span>
             </div>
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#features" className="text-gray-600 hover:text-[#0066FF] transition-colors">Features</a>
-              <a href={apkDownloadUrl} target="_blank" rel="noopener noreferrer" className="bg-[#0066FF] text-white px-6 py-2.5 rounded-full hover:bg-[#0052CC] transition-colors font-medium">
+              <a href="#features" className="text-gray-600 hover:text-[#3B1F8C] transition-colors">Features</a>
+              <a href={apkDownloadUrl} target="_blank" rel="noopener noreferrer" className="bg-[#3B1F8C] text-white px-6 py-2.5 rounded-full hover:bg-[#26145C] transition-colors font-medium">
                 Download App
               </a>
             </div>
@@ -49,8 +49,8 @@ export default function Home() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white">
             <div className="px-4 py-4 space-y-3">
-              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block text-gray-600 hover:text-[#0066FF] py-2">Features</a>
-              <a href={apkDownloadUrl} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="block bg-[#0066FF] text-white px-6 py-2.5 rounded-full text-center hover:bg-[#0052CC] transition-colors font-medium">
+              <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block text-gray-600 hover:text-[#3B1F8C] py-2">Features</a>
+              <a href={apkDownloadUrl} target="_blank" rel="noopener noreferrer" onClick={() => setMobileMenuOpen(false)} className="block bg-[#3B1F8C] text-white px-6 py-2.5 rounded-full text-center hover:bg-[#26145C] transition-colors font-medium">
                 Download App
               </a>
             </div>
@@ -67,14 +67,14 @@ export default function Home() {
                 Voice-Powered UPI Payments
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 mb-8 leading-relaxed">
-                Send money instantly with just your voice. EchoPay makes UPI payments faster, easier, and more accessible than ever before.
+                Send money instantly with just your voice. TunePay makes UPI payments faster, easier, and more accessible than ever before.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a 
                   href={apkDownloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center bg-[#0066FF] text-white px-8 py-4 rounded-full hover:bg-[#0052CC] transition-colors font-semibold text-lg"
+                  className="inline-flex items-center justify-center bg-[#3B1F8C] text-white px-8 py-4 rounded-full hover:bg-[#26145C] transition-colors font-semibold text-lg"
                 >
                   Download App
                   <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,10 +85,10 @@ export default function Home() {
             </div>
             <div className="relative">
               <div className="relative w-full max-w-md mx-auto">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0066FF] to-[#338EFF] rounded-3xl blur-3xl opacity-20"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#3B1F8C] to-[#6B4FD1] rounded-3xl blur-3xl opacity-20"></div>
                 <Image
                   src="/full-logo.png"
-                  alt="EchoPay App"
+                  alt="TunePay App"
                   width={400}
                   height={400}
                   className="relative z-10 w-full h-auto"
@@ -107,15 +107,15 @@ export default function Home() {
               Everything You Need for Seamless Payments
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              EchoPay combines cutting-edge voice technology with secure UPI payments
+              TunePay combines cutting-edge voice technology with secure UPI payments
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Voice Payments */}
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#0066FF]/10 rounded-xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-[#0066FF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-[#3B1F8C]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#3B1F8C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                 </svg>
               </div>
@@ -127,8 +127,8 @@ export default function Home() {
 
             {/* QR Code */}
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#00C853]/10 rounded-xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-[#00C853]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-[#10B981]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                 </svg>
               </div>
@@ -140,8 +140,8 @@ export default function Home() {
 
             {/* Contact Payments */}
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#2196F3]/10 rounded-xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-[#2196F3]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-[#3B1F8C]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#3B1F8C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
@@ -153,8 +153,8 @@ export default function Home() {
 
             {/* Phone Number */}
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#FF9800]/10 rounded-xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-[#FF9800]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-[#FFB800]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#FFB800]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
               </div>
@@ -166,8 +166,8 @@ export default function Home() {
 
             {/* UPI ID */}
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#E91E63]/10 rounded-xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-[#E91E63]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-[#FF5A5F]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#FF5A5F]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
                 </svg>
               </div>
@@ -179,8 +179,8 @@ export default function Home() {
 
             {/* Security */}
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-[#00BCD4]/10 rounded-xl flex items-center justify-center mb-6">
-                <svg className="w-7 h-7 text-[#00BCD4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-14 h-14 bg-[#2563EB]/10 rounded-xl flex items-center justify-center mb-6">
+                <svg className="w-7 h-7 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
@@ -194,14 +194,14 @@ export default function Home() {
       </section>
 
       {/* Voice Commands Showcase */}
-      <section className="py-20 bg-gradient-to-br from-[#0066FF] to-[#0052CC]">
+      <section className="py-20 bg-gradient-to-br from-[#3B1F8C] to-[#26145C]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
               Just Say It, We'll Do It
             </h2>
             <p className="text-lg text-white/90 max-w-2xl mx-auto">
-              Our AI understands natural language. Talk to EchoPay like you talk to a friend.
+              Our AI understands natural language. Talk to TunePay like you talk to a friend.
             </p>
           </div>
 
@@ -235,14 +235,14 @@ export default function Home() {
             Ready to Experience the Future of Payments?
           </h2>
           <p className="text-lg text-gray-600 mb-10">
-            Download EchoPay now and start making voice-powered UPI payments
+            Download TunePay now and start making voice-powered UPI payments
           </p>
           
           <a 
             href={apkDownloadUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center bg-[#0066FF] text-white px-10 py-5 rounded-full hover:bg-[#0052CC] transition-colors font-semibold text-xl shadow-lg"
+            className="inline-flex items-center justify-center bg-[#3B1F8C] text-white px-10 py-5 rounded-full hover:bg-[#26145C] transition-colors font-semibold text-xl shadow-lg"
           >
             Download App
             <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,12 +259,12 @@ export default function Home() {
             <div className="flex items-center gap-2">
               <Image
                 src="/symbol-logo.png"
-                alt="EchoPay"
+                alt="TunePay"
                 width={32}
                 height={32}
                 className="w-8 h-8"
               />
-              <span className="text-xl font-semibold">EchoPay</span>
+              <span className="text-xl font-semibold">TunePay</span>
             </div>
             
             <p className="text-gray-400 text-sm text-center">
@@ -278,7 +278,7 @@ export default function Home() {
           </div>
           
           <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2026 EchoPay. All rights reserved.</p>
+            <p>&copy; 2026 TunePay. All rights reserved.</p>
           </div>
         </div>
       </footer>
