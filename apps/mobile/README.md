@@ -1,8 +1,8 @@
-# EchoPay Mobile (React Native)
+# TunePay Mobile (React Native)
 
-The EchoPay mobile app, built with Expo and TypeScript. It talks to the backends started by `services/docker-compose.yml` (Django :8000, Flask :5002, Rasa :5005).
+The TunePay mobile app, built with Expo and TypeScript. It talks to the backends started by `services/docker-compose.yml` (Django :8000, Flask :5002, Rasa :5005).
 
-This app replaces the original Flutter client, which is preserved on the `flutter-app` branch.
+This app replaces the original Flutter client, which lives on in the [EchoPay](https://github.com/jefin10/EchoPay) repository.
 
 ## Setup
 
