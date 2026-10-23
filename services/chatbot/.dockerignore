@@ -1,6 +1,6 @@
 # Python
-__pycache__/
-*.py[cod]
+**/__pycache__/
+**/*.py[cod]
 *$py.class
 
 # Virtual environments
@@ -16,6 +16,8 @@ env/
 
 # Rasa
 .rasa/
+.config/
+.keras/
 *.tar.gz
 
 # Testing
