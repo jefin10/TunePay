@@ -22,7 +22,7 @@ const LIMITS = [
 const FAQ = [
   [
     'How do I send money by voice?',
-    'Tap the mic and say "Send ₹500 to" a phone number, UPI ID or contact name. EchoPay confirms the details before transferring.',
+    'Tap the mic and say "Send ₹500 to" a phone number, UPI ID or contact name. TunePay confirms the details before transferring.',
   ],
   [
     'What if a payment fails?',

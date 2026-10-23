@@ -1,5 +1,5 @@
 /**
- * EchoPay palette — deep violet ink, warm cream surfaces, a single yellow
+ * TunePay palette — deep violet ink, warm cream surfaces, a single yellow
  * "pop" accent. Flat colours only; no gradients.
  */
 export const Colors = {

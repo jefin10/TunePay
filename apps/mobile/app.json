@@ -1,18 +1,18 @@
 {
   "expo": {
-    "name": "EchoPay",
-    "slug": "echopay",
+    "name": "TunePay",
+    "slug": "tunepay",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "echopay",
+    "scheme": "tunepay",
     "userInterfaceStyle": "light",
     "ios": {
-      "bundleIdentifier": "com.jefin10.echopay",
+      "bundleIdentifier": "com.jefin10.tunepay",
       "supportsTablet": false
     },
     "android": {
-      "package": "com.jefin10.echopay",
+      "package": "com.jefin10.tunepay",
       "adaptiveIcon": {
         "backgroundColor": "#F5F1E6",
         "foregroundImage": "./assets/images/adaptive-icon.png"
@@ -36,33 +36,33 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "EchoPay uses the microphone for voice payments.",
-          "speechRecognitionPermission": "EchoPay uses speech recognition to understand voice commands."
+          "microphonePermission": "TunePay uses the microphone for voice payments.",
+          "speechRecognitionPermission": "TunePay uses speech recognition to understand voice commands."
         }
       ],
       [
         "expo-local-authentication",
         {
-          "faceIDPermission": "EchoPay uses Face ID to confirm it's you before payments."
+          "faceIDPermission": "TunePay uses Face ID to confirm it's you before payments."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "EchoPay uses the camera to scan UPI QR codes.",
+          "cameraPermission": "TunePay uses the camera to scan UPI QR codes.",
           "recordAudioAndroid": false
         }
       ],
       [
         "expo-contacts",
         {
-          "contactsPermission": "EchoPay reads your contacts so you can pay them quickly."
+          "contactsPermission": "TunePay reads your contacts so you can pay them quickly."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "EchoPay reads QR codes from images you pick.",
+          "photosPermission": "TunePay reads QR codes from images you pick.",
           "cameraPermission": false,
           "microphonePermission": false
         }
@@ -70,7 +70,7 @@
       [
         "expo-media-library",
         {
-          "savePhotosPermission": "EchoPay saves your payment QR code to your photos."
+          "savePhotosPermission": "TunePay saves your payment QR code to your photos."
         }
       ],
       "expo-sqlite",

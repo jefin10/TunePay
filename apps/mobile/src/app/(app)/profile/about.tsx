@@ -13,7 +13,7 @@ export default function AboutScreen() {
         <ScreenHeader title="about" />
         <View style={styles.heading}>
           <AppText style={Type.eyebrow()}>about</AppText>
-          <AppText style={[Type.heading(30, 800), styles.title]}>{'EchoPay\nApp.'}</AppText>
+          <AppText style={[Type.heading(30, 800), styles.title]}>{'TunePay\nApp.'}</AppText>
         </View>
 
         <View style={styles.brand}>
@@ -21,13 +21,13 @@ export default function AboutScreen() {
             <AppLogo type="icon" width={44} height={44} />
           </View>
           <View>
-            <AppText style={Type.heading(20)}>EchoPay</AppText>
+            <AppText style={Type.heading(20)}>TunePay</AppText>
             <AppText style={Type.body(13, 500, Colors.textSecondary)}>Version {version}</AppText>
           </View>
         </View>
 
         <AppText style={[Type.body(14, 500, Colors.textGrayDark), styles.blurb]}>
-          Pay with your voice. EchoPay lets you send and receive money just by speaking. Built for speed, designed for
+          Pay with your voice. TunePay lets you send and receive money just by speaking. Built for speed, designed for
           trust.
         </AppText>
 

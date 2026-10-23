@@ -42,7 +42,7 @@ export default function PhoneNumberScreen() {
           <View style={styles.logoBox}>
             <AppLogo type="icon" width={28} height={28} />
           </View>
-          <AppText style={Type.heading(17)}>EchoPay</AppText>
+          <AppText style={Type.heading(17)}>TunePay</AppText>
         </View>
       }
       eyebrow="sign in"

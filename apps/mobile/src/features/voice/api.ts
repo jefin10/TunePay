@@ -103,7 +103,7 @@ export async function chat(message: string, userPhone = ''): Promise<VoiceOutcom
   try {
     const replies = await postJson<{ text?: string }[]>(Endpoints.rasaChat, {
       // One Rasa conversation per user.
-      sender: userPhone || 'echopay-guest',
+      sender: userPhone || 'tunepay-guest',
       message,
     });
     const text = Array.isArray(replies) && replies[0]?.text ? replies[0].text : FALLBACK_REPLY;

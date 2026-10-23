@@ -89,7 +89,7 @@ it('pays a contact who has an account', async () => {
   expect(bodyOf(fetchMock, 'sendMoneyPhone')).toMatchObject({ receiverPhone: '+919123456789', amount: 120.5 });
 });
 
-it('tells the user when a contact is not on EchoPay', async () => {
+it('tells the user when a contact is not on TunePay', async () => {
   mockBackend({ checkHasAccount: [{ hasAccount: false }, 404] });
   await renderRouter('./src/app', { initialUrl: '/pay/contacts' });
   await press(await screen.findByText('Arjun'));

@@ -6,7 +6,7 @@ const SOURCES = {
   icon: require('../../../assets/images/symbol-logo.png'),
 } as const;
 
-/** One of the three EchoPay logo assets. */
+/** One of the three TunePay logo assets. */
 export function AppLogo({
   type = 'full',
   width,
@@ -23,7 +23,7 @@ export function AppLogo({
       source={SOURCES[type]}
       style={[{ width, height }, style]}
       resizeMode="contain"
-      accessibilityLabel="EchoPay"
+      accessibilityLabel="TunePay"
     />
   );
 }
