@@ -1,40 +1,40 @@
-# EchoPay Project - Completely separate from VoiceUPI
-name: echopay
+# TunePay services
+name: tunepay
 
 services:
   # PostgreSQL Database
   db:
     image: postgres:15
-    container_name: echopay_db
+    container_name: tunepay_db
     environment:
-      POSTGRES_DB: echopay_db
-      POSTGRES_USER: echopay_user
-      POSTGRES_PASSWORD: echopay_password
+      POSTGRES_DB: tunepay_db
+      POSTGRES_USER: tunepay_user
+      POSTGRES_PASSWORD: tunepay_password
     ports:
       - "5432:5432"
     volumes:
-      - echopay_postgres_data:/var/lib/postgresql/data
+      - tunepay_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U echopay_user -d echopay_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U tunepay_user -d tunepay_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - echopay_network
+      - tunepay_network
 
   # Django Backend (UPI Transaction Service)
   django:
     build:
       context: ./api
       dockerfile: Dockerfile
-    container_name: echopay_django
+    container_name: tunepay_django
     environment:
       - DEBUG=1
       - DJANGO_SETTINGS_MODULE=DJBackend.settings
-      - DATABASE_URL=postgresql://echopay_user:echopay_password@db:5432/echopay_db
-      - POSTGRES_DB=echopay_db
-      - POSTGRES_USER=echopay_user
-      - POSTGRES_PASSWORD=echopay_password
+      - DATABASE_URL=postgresql://tunepay_user:tunepay_password@db:5432/tunepay_db
+      - POSTGRES_DB=tunepay_db
+      - POSTGRES_USER=tunepay_user
+      - POSTGRES_PASSWORD=tunepay_password
       - POSTGRES_HOST=db
       - POSTGRES_PORT=5432
     ports:
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./api:/app
     networks:
-      - echopay_network
+      - tunepay_network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8000/" ]
       interval: 30s
@@ -58,7 +58,7 @@ services:
     build:
       context: ./voice
       dockerfile: Dockerfile
-    container_name: echopay_flask
+    container_name: tunepay_flask
     environment:
       - FLASK_ENV=development
       - FLASK_APP=flask_server.py
@@ -68,7 +68,7 @@ services:
     depends_on:
       - django
     networks:
-      - echopay_network
+      - tunepay_network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:5002/health" ]
       interval: 30s
@@ -81,14 +81,14 @@ services:
     build:
       context: ./chatbot
       dockerfile: Dockerfile
-    container_name: echopay_rasa
+    container_name: tunepay_rasa
     ports:
       - "5005:5005"
     volumes:
       - ./chatbot/models:/app/models
     command: run --enable-api --cors "*" --debug
     networks:
-      - echopay_network
+      - tunepay_network
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:5005/" ]
       interval: 30s
@@ -97,10 +97,10 @@ services:
       start_period: 60s
 
 volumes:
-  echopay_postgres_data:
-    name: echopay_postgres_data
+  tunepay_postgres_data:
+    name: tunepay_postgres_data
 
 networks:
-  echopay_network:
-    name: echopay_network
+  tunepay_network:
+    name: tunepay_network
     driver: bridge

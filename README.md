@@ -1,8 +1,8 @@
-# EchoPay: Voice-Enabled UPI Payment System
+# TunePay: Voice-Enabled UPI Payment System
 
-EchoPay is a multi-service UPI payment platform that combines a React Native (Expo) mobile app with Django transaction APIs, a Flask voice-intelligence service, and a Rasa conversational assistant.
+TunePay is a multi-service UPI payment platform that combines a React Native (Expo) mobile app with Django transaction APIs, a Flask voice-intelligence service, and a Rasa conversational assistant.
 
-The original Flutter app lives on the [`flutter-app`](https://github.com/jefin10/EchoPay/tree/flutter-app) branch and is no longer maintained on `main`.
+TunePay is the React Native rebrand of [EchoPay](https://github.com/jefin10/EchoPay). Commit history before the rebrand includes the original Flutter client, which the EchoPay repository keeps shipping.
 
 ## Project Overview
 
@@ -57,7 +57,7 @@ The platform supports manual and voice-first payment interactions. Voice input i
 ## Repository Structure
 
 ```
-EchoPay/
+TunePay/
 ├── apps/
 │   ├── mobile/                   # React Native (Expo) app
 │   └── web/                      # Next.js landing page
@@ -80,8 +80,8 @@ EchoPay/
 ### 1. Clone and Enter the Repository
 
 ```bash
-git clone https://github.com/jefin10/EchoPay.git
-cd EchoPay
+git clone https://github.com/jefin10/TunePay.git
+cd TunePay
 ```
 
 ### 2. Start Backend Services

@@ -1,6 +1,6 @@
-# EchoPay Landing Page
+# TunePay Landing Page
 
-Marketing site for EchoPay, built with Next.js 16, React 19 and Tailwind CSS 4. It introduces the app and links to the latest Android build.
+Marketing site for TunePay, built with Next.js 16, React 19 and Tailwind CSS 4. It introduces the app and links to the latest Android build.
 
 ## Development
 
@@ -18,7 +18,7 @@ The page lives in `app/page.tsx` and shared metadata in `app/layout.tsx`. Logos 
 The download buttons point to:
 
 ```
-https://github.com/jefin10/EchoPay/releases/latest/download/app-release.apk
+https://github.com/jefin10/TunePay/releases/latest/download/app-release.apk
 ```
 
 Publish each Android build (see `../mobile/README.md`) as a GitHub release asset named `app-release.apk` to keep the link working.
