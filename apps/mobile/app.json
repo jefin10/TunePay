@@ -62,9 +62,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "TunePay reads QR codes from images you pick.",
-          "cameraPermission": false,
-          "microphonePermission": false
+          "photosPermission": "TunePay reads QR codes from images you pick."
         }
       ],
       [
