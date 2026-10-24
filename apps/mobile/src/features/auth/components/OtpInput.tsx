@@ -14,6 +14,9 @@ const LENGTH = 6;
 /** Six single-digit boxes with auto-advance, backspace-to-previous and paste/autofill support. */
 export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => void; ref?: Ref<OtpInputHandle> }) {
   const [digits, setDigits] = useState<string[]>(Array(LENGTH).fill(''));
+  // Read through a ref: two keystrokes can arrive before React re-renders,
+  // and a stale `digits` copy would overwrite the first one.
+  const digitsRef = useRef(digits);
   const [focused, setFocused] = useState(0);
   const inputs = useRef<(TextInputInstance | null)[]>([]);
   const shake = useSharedValue(0);
@@ -25,7 +28,8 @@ export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => vo
 
   useImperativeHandle(ref, () => ({
     reject() {
-      setDigits(Array(LENGTH).fill(''));
+      digitsRef.current = Array(LENGTH).fill('');
+      setDigits(digitsRef.current);
       inputs.current[0]?.focus();
       const step = { duration: 50 };
       shake.set(
@@ -43,6 +47,7 @@ export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => vo
   const shakeStyle = useAnimatedStyle(() => ({ transform: [{ translateX: shake.get() }] }));
 
   const update = (next: string[]) => {
+    digitsRef.current = next;
     setDigits(next);
     if (next.every((d) => d !== '')) onComplete(next.join(''));
   };
@@ -50,8 +55,9 @@ export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => vo
   const onChange = (index: number, text: string) => {
     const clean = text.replace(/\D/g, '');
     if (clean.length > 1) {
-      // Paste or SMS autofill: spread from this box onwards.
-      const next = [...digits];
+      // Paste, SMS autofill, or typing faster than focus moves: spread from
+      // this box onwards.
+      const next = [...digitsRef.current];
       clean
         .slice(0, LENGTH - index)
         .split('')
@@ -60,7 +66,7 @@ export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => vo
       inputs.current[Math.min(index + clean.length, LENGTH - 1)]?.focus();
       return;
     }
-    const next = [...digits];
+    const next = [...digitsRef.current];
     next[index] = clean;
     update(next);
     if (clean && index < LENGTH - 1) inputs.current[index + 1]?.focus();
@@ -79,9 +85,10 @@ export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => vo
             value={d}
             onChangeText={(t) => onChange(i, t)}
             onKeyPress={({ nativeEvent }) => {
-              if (nativeEvent.key === 'Backspace' && !digits[i] && i > 0) {
-                const next = [...digits];
+              if (nativeEvent.key === 'Backspace' && !digitsRef.current[i] && i > 0) {
+                const next = [...digitsRef.current];
                 next[i - 1] = '';
+                digitsRef.current = next;
                 setDigits(next);
                 inputs.current[i - 1]?.focus();
               }
@@ -90,7 +97,7 @@ export function OtpInput({ onComplete, ref }: { onComplete: (code: string) => vo
             keyboardType="number-pad"
             textContentType={i === 0 ? 'oneTimeCode' : 'none'}
             autoComplete={i === 0 ? 'sms-otp' : 'off'}
-            maxLength={i === 0 ? LENGTH : 1}
+            maxLength={LENGTH}
             selectTextOnFocus
             caretHidden
             accessibilityLabel={`Digit ${i + 1}`}

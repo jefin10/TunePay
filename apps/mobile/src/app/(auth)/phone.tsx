@@ -64,7 +64,10 @@ export default function PhoneNumberScreen() {
         <View style={styles.divider} />
         <TextInput
           value={phone}
-          onChangeText={(t) => setPhone(t.replace(/\D/g, '').slice(0, 10))}
+          onChangeText={(t) => {
+            setPhone(t.replace(/\D/g, '').slice(0, 10));
+            setError(null);
+          }}
           placeholder="Mobile number"
           placeholderTextColor={Colors.textMuted}
           keyboardType="phone-pad"

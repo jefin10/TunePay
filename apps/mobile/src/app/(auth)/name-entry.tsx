@@ -43,7 +43,10 @@ export default function NameEntryScreen() {
       footer={<AppButton label="Create account" icon="arrow-forward" loading={loading} onPress={submit} />}>
       <TextInput
         value={name}
-        onChangeText={setName}
+        onChangeText={(t) => {
+          setName(t);
+          setError(null);
+        }}
         placeholder="Your full name"
         placeholderTextColor={Colors.textMuted}
         autoCapitalize="words"
