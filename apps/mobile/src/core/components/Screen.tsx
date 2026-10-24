@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Colors } from '@/core/theme';
+import { useKeyboardHeight } from '@/core/use-keyboard-height';
 
 /**
  * Cream page with safe-area padding. Scrolls by default; pass `onRefresh`
@@ -23,10 +24,17 @@ export function Screen({
   contentStyle?: StyleProp<ViewStyle>;
   edges?: ('top' | 'bottom')[];
 }) {
+  // Shrink the scroll area above the keyboard so Android scrolls the
+  // focused input into view; edge-to-edge no longer resizes the window.
+  const keyboard = useKeyboardHeight();
+  const { bottom } = useSafeAreaInsets();
+  const keyboardInset = Math.max(0, keyboard - (edges.includes('bottom') ? bottom : 0));
+
   return (
     <SafeAreaView style={styles.root} edges={edges}>
       {scroll ? (
         <ScrollView
+          style={{ marginBottom: keyboardInset }}
           contentContainerStyle={[styles.content, contentStyle]}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
