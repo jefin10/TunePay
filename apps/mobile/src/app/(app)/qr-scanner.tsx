@@ -1,6 +1,8 @@
 import { CameraView, scanFromURLAsync, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import { router } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router, useIsFocused } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 import Animated, {
@@ -20,6 +22,7 @@ const FRAME = 260;
 
 export default function QrScannerScreen() {
   const [permission, requestPermission] = useCameraPermissions();
+  const focused = useIsFocused();
   const [torch, setTorch] = useState(false);
   const [scanned, setScanned] = useState<{ raw: string; upi: UpiQr | null } | null>(null);
 
@@ -53,6 +56,9 @@ export default function QrScannerScreen() {
 
   return (
     <View style={styles.root}>
+      {/* The root layout uses dark status bar icons; this screen is dark.
+          Only while focused, or screens pushed on top (My QR) inherit it. */}
+      {focused && <StatusBar style="light" />}
       {permission?.granted ? (
         <CameraView
           style={StyleSheet.absoluteFill}
@@ -77,6 +83,15 @@ export default function QrScannerScreen() {
             style={styles.permissionButton}
           />
         </View>
+      )}
+
+      {permission?.granted && (
+        // Keeps the white title and back button readable over bright scenes.
+        <LinearGradient
+          colors={[alpha(Colors.backgroundDark, 0.75), alpha(Colors.backgroundDark, 0)]}
+          style={styles.topScrim}
+          pointerEvents="none"
+        />
       )}
 
       <SafeAreaView style={styles.overlay} pointerEvents="box-none">
@@ -172,6 +187,7 @@ function Action({ icon, label, onPress }: { icon: IconName; label: string; onPre
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.backgroundDark },
+  topScrim: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
   overlay: { flex: 1 },
   flex: { flex: 1 },
   center: { textAlign: 'center' },
