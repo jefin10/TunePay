@@ -117,7 +117,8 @@ export default function HomeScreen() {
           </View>
           <View style={styles.flex}>
             <AppText style={Type.eyebrow(Colors.ink)}>voice pay</AppText>
-            <AppText style={[Type.heading(16), styles.voiceTitle]}>“Send ₹500 to 98765 43210”</AppText>
+            {/* Non-breaking space: wrap before the number, not inside it. */}
+            <AppText style={[Type.heading(16), styles.voiceTitle]}>{'“Send ₹500 to 98765 43210”'}</AppText>
             <AppText style={Type.body(12, 500, Colors.textSecondary)}>Say it once. We handle the rest.</AppText>
           </View>
           <View style={styles.voiceArrow}>
