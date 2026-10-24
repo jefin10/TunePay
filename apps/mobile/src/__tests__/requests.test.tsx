@@ -45,6 +45,11 @@ it('pays a received request', async () => {
   expect(await screen.findByText('priya')).toBeOnTheScreen();
   expect(screen.getByText('“lunch”')).toBeOnTheScreen();
   await press(screen.getByText('Pay'));
+  // Nothing is sent until the confirmation dialog is accepted.
+  expect(await screen.findByText('Pay ₹150.00?')).toBeOnTheScreen();
+  expect(bodiesOf(fetchMock, 'updateRequestStatus')).toEqual([]);
+  const payButtons = screen.getAllByText('Pay');
+  await press(payButtons[payButtons.length - 1]);
   expect(await screen.findByText('Paid')).toBeOnTheScreen();
   expect(bodiesOf(fetchMock, 'updateRequestStatus')).toEqual([
     { requestId: 9, status: 'approved', phoneNumber: '+919876543210' },
@@ -62,6 +67,7 @@ it('cancels a sent request', async () => {
   await press(await screen.findByText('Sent'));
   expect(screen.getByText('arjun')).toBeOnTheScreen();
   await press(screen.getByText('Cancel request'));
+  await press(await screen.findByText('Yes, cancel'));
   expect(bodiesOf(fetchMock, 'updateRequestStatus')[0]).toMatchObject({ requestId: 7, status: 'cancelled' });
 });
 

@@ -2,14 +2,16 @@ import { useState } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { AppText, Icon, ScreenHeader, Tap, toast, type IconName } from '@/core/components';
+import { AppButton, AppDialog, AppText, Icon, ScreenHeader, Tap, toast, type IconName } from '@/core/components';
 import { useSession } from '@/core/storage/session';
 import { Colors, Type } from '@/core/theme';
+import { formatINR } from '@/core/utils/format';
 import { useRefreshAccount } from '@/features/account/hooks';
 import { updateRequestStatus } from '@/features/payments/api';
 import { NewRequestSheet } from '@/features/payments/components/NewRequestSheet';
 import { RequestCard } from '@/features/payments/components/RequestCard';
 import { useMoneyRequests } from '@/features/payments/hooks';
+import type { MoneyRequest } from '@/models/money-request';
 
 type Tab = 'received' | 'sent';
 
@@ -20,6 +22,19 @@ const EMPTY: Record<Tab, { icon: IconName; text: string }> = {
 
 const DONE_MESSAGE = { approved: 'Paid', rejected: 'Request declined', cancelled: 'Request cancelled' } as const;
 
+type Action = 'approved' | 'rejected' | 'cancelled';
+
+/** Every request action acts on the first tap otherwise, and "Pay" moves money. */
+const CONFIRM: Record<Action, { title: (amount: string) => string; body: (name: string, amount: string) => string; action: string }> = {
+  approved: { title: (a) => `Pay ${a}?`, body: (n, a) => `${a} will be sent to ${n}.`, action: 'Pay' },
+  rejected: { title: () => 'Decline request?', body: (n, a) => `${n} asked you for ${a}.`, action: 'Decline' },
+  cancelled: {
+    title: () => 'Cancel request?',
+    body: (n, a) => `Your request to ${n} for ${a} will be withdrawn.`,
+    action: 'Yes, cancel',
+  },
+};
+
 export default function RequestsScreen() {
   const phoneNumber = useSession((s) => s.phoneNumber) ?? '';
   const requests = useMoneyRequests();
@@ -27,9 +42,10 @@ export default function RequestsScreen() {
   const [tab, setTab] = useState<Tab>('received');
   const [busyId, setBusyId] = useState<number | null>(null);
   const [composing, setComposing] = useState(false);
+  const [confirming, setConfirming] = useState<{ request: MoneyRequest; status: Action } | null>(null);
   const insets = useSafeAreaInsets();
 
-  const act = async (requestId: number, status: 'approved' | 'rejected' | 'cancelled') => {
+  const act = async (requestId: number, status: Action) => {
     setBusyId(requestId);
     const result = await updateRequestStatus({ requestId, status, phoneNumber });
     setBusyId(null);
@@ -82,7 +98,7 @@ export default function RequestsScreen() {
               request={item}
               direction={tab}
               busy={busyId === item.id}
-              onAction={(status) => act(item.id, status)}
+              onAction={(status) => setConfirming({ request: item, status })}
             />
           )}
           ListEmptyComponent={
@@ -126,12 +142,47 @@ export default function RequestsScreen() {
           requests.refetch();
         }}
       />
+
+      <AppDialog visible={confirming !== null} onClose={() => setConfirming(null)}>
+        {confirming && (
+          <>
+            <AppText style={Type.heading(22)}>
+              {CONFIRM[confirming.status].title(formatINR(confirming.request.amount))}
+            </AppText>
+            <AppText style={[Type.body(14, 500, Colors.textSecondary), styles.confirmBody]}>
+              {CONFIRM[confirming.status].body(confirming.request.counterpartyName, formatINR(confirming.request.amount))}
+            </AppText>
+            <View style={styles.confirmActions}>
+              <AppButton
+                label={confirming.status === 'cancelled' ? 'Keep it' : 'Cancel'}
+                outline
+                onPress={() => setConfirming(null)}
+                style={styles.flex}
+              />
+              <AppButton
+                label={CONFIRM[confirming.status].action}
+                background={confirming.status === 'approved' ? undefined : Colors.coral}
+                onPress={() => {
+                  const { request, status } = confirming;
+                  setConfirming(null);
+                  act(request.id, status);
+                }}
+                style={styles.flex}
+              />
+            </View>
+          </>
+        )}
+      </AppDialog>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: Colors.surfaceLight },
+  flex: { flex: 1 },
+  // Same layout as the log out dialog on the profile tab.
+  confirmBody: { marginTop: 8, textAlign: 'center' },
+  confirmActions: { flexDirection: 'row', gap: 10, alignSelf: 'stretch', marginTop: 22 },
   header: { paddingHorizontal: 20, paddingTop: 8, gap: 18, marginBottom: 14 },
   tabs: {
     flexDirection: 'row',
