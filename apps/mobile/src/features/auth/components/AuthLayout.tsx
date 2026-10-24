@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText, Entrance } from '@/core/components';
 import { Colors, Type } from '@/core/theme';
+import { useKeyboardHeight } from '@/core/use-keyboard-height';
 
 /**
  * Shared shell for the onboarding screens: eyebrow, big heading, subtitle,
@@ -24,9 +25,12 @@ export function AuthLayout({
   children?: ReactNode;
   footer: ReactNode;
 }) {
+  const keyboard = useKeyboardHeight();
+  const { bottom } = useSafeAreaInsets();
+
   return (
     <SafeAreaView style={styles.root}>
-      <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <View style={[styles.flex, { paddingBottom: Math.max(0, keyboard - bottom) }]}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <Entrance style={styles.flex}>
             {top}
@@ -40,7 +44,7 @@ export function AuthLayout({
             {footer}
           </Entrance>
         </ScrollView>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }
