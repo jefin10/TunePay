@@ -17,6 +17,76 @@ The platform supports manual and voice-first payment interactions. Voice input i
 - OTP-led onboarding and account access
 - Transaction and money request management
 
+## Screenshots
+
+Captured from the Android app on a Samsung Galaxy A31, signed in as a demo user with sample data.
+
+### Sign in and home
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/01-sign-in.png" width="200" alt="Sign in"><br><sub>Sign in</sub></td>
+    <td align="center"><img src="docs/screenshots/02-verify-code.png" width="200" alt="Verify code"><br><sub>Verify code</sub></td>
+    <td align="center"><img src="docs/screenshots/03-home.png" width="200" alt="Home"><br><sub>Home</sub></td>
+    <td align="center"><img src="docs/screenshots/04-home-activity.png" width="200" alt="Recent activity"><br><sub>Recent activity</sub></td>
+  </tr>
+</table>
+
+### Money
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/05-history.png" width="200" alt="History"><br><sub>History</sub></td>
+    <td align="center"><img src="docs/screenshots/06-balance.png" width="200" alt="Balance"><br><sub>Balance</sub></td>
+    <td align="center"><img src="docs/screenshots/07-requests.png" width="200" alt="Requests"><br><sub>Requests</sub></td>
+    <td align="center"><img src="docs/screenshots/08-my-qr.png" width="200" alt="My QR"><br><sub>My QR</sub></td>
+  </tr>
+</table>
+
+### Payments
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/09-pay-phone.png" width="200" alt="Pay a phone number"><br><sub>Pay a phone number</sub></td>
+    <td align="center"><img src="docs/screenshots/10-payment-sent.png" width="200" alt="Payment sent"><br><sub>Payment sent</sub></td>
+    <td align="center"><img src="docs/screenshots/11-pay-upi.png" width="200" alt="Pay a UPI ID"><br><sub>Pay a UPI ID</sub></td>
+  </tr>
+</table>
+
+### Voice
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/12-voice.png" width="200" alt="Voice"><br><sub>Voice</sub></td>
+    <td align="center"><img src="docs/screenshots/13-voice-pay.png" width="200" alt="Voice pay"><br><sub>Voice pay</sub></td>
+  </tr>
+</table>
+
+### Profile
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/14-profile.png" width="200" alt="Profile"><br><sub>Profile</sub></td>
+    <td align="center"><img src="docs/screenshots/15-account.png" width="200" alt="Account details"><br><sub>Account details</sub></td>
+    <td align="center"><img src="docs/screenshots/16-security.png" width="200" alt="Security"><br><sub>Security</sub></td>
+    <td align="center"><img src="docs/screenshots/17-appearance.png" width="200" alt="Appearance"><br><sub>Appearance</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/screenshots/18-about.png" width="200" alt="About"><br><sub>About</sub></td>
+  </tr>
+</table>
+
+### Dark mode
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/19-dark-home.png" width="200" alt="Home"><br><sub>Home</sub></td>
+    <td align="center"><img src="docs/screenshots/20-dark-history.png" width="200" alt="History"><br><sub>History</sub></td>
+    <td align="center"><img src="docs/screenshots/21-dark-my-qr.png" width="200" alt="My QR"><br><sub>My QR</sub></td>
+    <td align="center"><img src="docs/screenshots/22-dark-voice.png" width="200" alt="Voice"><br><sub>Voice</sub></td>
+  </tr>
+</table>
+
 ## Technology Stack
 
 - Mobile app: React Native 0.88 + Expo SDK 58, TypeScript, Expo Router, React Query
@@ -71,7 +141,8 @@ TunePay/
 │   └── docker-compose.yml        # runs api, voice, chatbot + PostgreSQL
 ├── docs/
 │   ├── api.md                    # Django API reference
-│   └── voice-api.md              # Flask voice API reference
+│   ├── voice-api.md              # Flask voice API reference
+│   └── screenshots/              # app screenshots shown above
 └── README.md
 ```
 
