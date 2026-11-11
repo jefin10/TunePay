@@ -1,23 +1,21 @@
-import { Children, useEffect, type ReactNode } from 'react';
-import type { StyleProp, ViewStyle } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useReducedMotion,
-  useSharedValue,
-  withDelay,
-  withTiming,
-} from 'react-native-reanimated';
+import { Children, isValidElement, type ReactNode } from 'react';
+import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 import { Motion } from '@/core/theme';
+import { useReduceMotion } from '@/core/use-reduce-motion';
 
-/**
- * One-shot entrance: fade + rise, plays once on mount. Wrap a screen's body
- * so it doesn't snap in. Honors reduced motion.
- */
+const rise = (delay: number, distance: number) =>
+  FadeInDown.delay(delay)
+    .duration(Motion.rise)
+    .easing(Motion.out)
+    .withInitialValues({ opacity: 0, transform: [{ translateY: distance }] });
+
+/** Rises in on mount: fade + lift, once. Honors reduced motion. */
 export function Entrance({
   children,
   delay = 0,
-  distance = 16,
+  distance = 18,
   style,
 }: {
   children: ReactNode;
@@ -25,30 +23,35 @@ export function Entrance({
   distance?: number;
   style?: StyleProp<ViewStyle>;
 }) {
-  const reduce = useReducedMotion();
-  const t = useSharedValue(reduce ? 1 : 0);
-
-  useEffect(() => {
-    if (!reduce) t.set(withDelay(delay, withTiming(1, { duration: Motion.enter, easing: Motion.out })));
-  }, [reduce, delay, t]);
-
-  const animated = useAnimatedStyle(() => ({
-    opacity: t.get(),
-    transform: [{ translateY: (1 - t.get()) * distance }],
-  }));
-
-  return <Animated.View style={[style, animated]}>{children}</Animated.View>;
+  const reduce = useReduceMotion();
+  return (
+    <Animated.View style={style} entering={reduce ? undefined : rise(delay, distance)}>
+      {children}
+    </Animated.View>
+  );
 }
 
-/** Children fade + rise in sequence, once, on mount. */
-export function Stagger({ children, step = 55, style }: { children: ReactNode; step?: number; style?: StyleProp<ViewStyle> }) {
+/** Rises each child in on mount, one beat after the other. */
+export function Stagger({ children, delay = 90, step = 70 }: { children: ReactNode; delay?: number; step?: number }) {
+  const reduce = useReduceMotion();
+  if (reduce) return <>{children}</>;
   return (
     <>
-      {Children.toArray(children).map((child, i) => (
-        <Entrance key={i} delay={Math.min(i * step, 430)} distance={14} style={style}>
-          {child}
-        </Entrance>
-      ))}
+      {Children.toArray(children).map((child, i) => {
+        // Carry a flex child's flex onto its wrapper so layouts that fill the
+        // remaining space keep doing so.
+        const flex = isValidElement<{ style?: StyleProp<ViewStyle> }>(child)
+          ? StyleSheet.flatten(child.props.style)?.flex
+          : undefined;
+        return (
+          <Animated.View
+            key={isValidElement(child) && child.key != null ? child.key : i}
+            style={flex ? { flex } : undefined}
+            entering={rise(delay + Math.min(i, 8) * step, 18)}>
+            {child}
+          </Animated.View>
+        );
+      })}
     </>
   );
 }

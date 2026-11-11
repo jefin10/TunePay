@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AppButton, AppText, ErrorCard, Field, Sheet } from '@/core/components';
+import { AppButton, Field, Notice, Sheet } from '@/core/components';
 import { useSession } from '@/core/storage/session';
-import { Type } from '@/core/theme';
+import { makeStyles } from '@/core/theme';
 import { isUpiId, localPhone, toIndianE164 } from '@/core/utils/phone';
 
 import { parseAmount } from '../amount';
@@ -12,6 +12,7 @@ import { AmountField } from './AmountField';
 
 /** Ask someone (by phone number or UPI ID) to pay you. */
 export function NewRequestSheet({ visible, onClose, onSent }: { visible: boolean; onClose: () => void; onSent: () => void }) {
+  const styles = useStyles();
   const requesterPhone = useSession((s) => s.phoneNumber) ?? '';
   const [who, setWho] = useState('');
   const [amount, setAmount] = useState('');
@@ -53,12 +54,8 @@ export function NewRequestSheet({ visible, onClose, onSent }: { visible: boolean
   };
 
   return (
-    <Sheet visible={visible} onClose={onClose} dismissable={!sending}>
+    <Sheet visible={visible} onClose={onClose} dismissable={!sending} title="Ask someone to pay you">
       <View style={styles.body}>
-        <View style={styles.heading}>
-          <AppText style={Type.eyebrow()}>new request</AppText>
-          <AppText style={[Type.heading(26, 800), styles.title]}>{'Ask anyone\nto pay you.'}</AppText>
-        </View>
         <Field
           label="Phone number or UPI ID"
           value={who}
@@ -70,20 +67,18 @@ export function NewRequestSheet({ visible, onClose, onSent }: { visible: boolean
         />
         <AmountField value={amount} onChangeText={setAmount} />
         <Field label="Note (optional)" value={message} onChangeText={setMessage} placeholder="Add a note" maxLength={80} />
-        {error && <ErrorCard message={error} />}
+        {error ? <Notice tone="err">{error}</Notice> : null}
         <View style={styles.actions}>
-          <AppButton label="Cancel" outline onPress={onClose} disabled={sending} style={styles.flex} />
-          <AppButton label="Send request" onPress={send} loading={sending} style={styles.flex} />
+          <AppButton label="Cancel" variant="secondary" onPress={onClose} disabled={sending} style={styles.grow} />
+          <AppButton label="Send request" onPress={send} loading={sending} style={styles.grow} />
         </View>
       </View>
     </Sheet>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(() => ({
   body: { gap: 16 },
-  heading: { gap: 6 },
-  title: { lineHeight: 30 },
-  actions: { flexDirection: 'row', gap: 10 },
-  flex: { flex: 1 },
-});
+  actions: { flexDirection: 'row', gap: 10, marginTop: 4 },
+  grow: { flex: 1 },
+}));

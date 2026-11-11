@@ -1,17 +1,22 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useReducedMotion,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-} from 'react-native-reanimated';
+import { useState } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
 import { confirmWithBiometrics } from '@/core/biometrics';
-import { AppButton, AppDialog, AppText, Entrance, Icon, Screen, ScreenHeader, Tap, toast } from '@/core/components';
+import {
+  AppDialog,
+  Card,
+  Chip,
+  DialogActions,
+  Entrance,
+  Icon,
+  Notice,
+  Screen,
+  toast,
+  TopNav,
+  useText,
+} from '@/core/components';
 import { useSession } from '@/core/storage/session';
-import { alpha, Colors, Motion, Type } from '@/core/theme';
+import { Fonts, makeStyles, useColors } from '@/core/theme';
 import { formatINR } from '@/core/utils/format';
 import { getBalance } from '@/features/account/api';
 import { useRefreshAccount } from '@/features/account/hooks';
@@ -20,6 +25,7 @@ import { SuccessDialog } from '@/features/payments/components/SuccessDialog';
 import type { DeviceContact } from '@/features/payments/contacts';
 import { processCommand } from '@/features/voice/api';
 import { ConfirmSheet } from '@/features/voice/components/ConfirmSheet';
+import { MicButton } from '@/features/voice/components/MicButton';
 import { ServerStatus } from '@/features/voice/components/ServerStatus';
 import { useVoiceServerHealth } from '@/features/voice/hooks';
 import { resolveRecipient, type Target } from '@/features/voice/resolve';
@@ -35,6 +41,9 @@ type Pending = {
 };
 
 export default function SpeechScreen() {
+  const C = useColors();
+  const styles = useStyles();
+  const t = useText();
   const { phoneNumber, flags } = useSession();
   const online = useVoiceServerHealth().data === true;
   const refreshAccount = useRefreshAccount();
@@ -120,56 +129,55 @@ export default function SpeechScreen() {
   const showIntro = !speech.listening && !speech.transcript && !processing && !reply;
 
   return (
-    <Screen contentStyle={styles.content}>
-      <ScreenHeader title="voice pay" right={<ServerStatus />} />
+    <Screen scroll={false}>
+      <TopNav title="Voice pay" right={<ServerStatus />} />
 
       <View style={styles.body}>
-        {showIntro && (
+        {showIntro ? (
           <Entrance style={styles.intro}>
-            <AppText style={Type.eyebrow()}>voice pay</AppText>
-            <AppText style={[Type.heading(30, 800), styles.introTitle]}>{'Just say what\nyou want to do.'}</AppText>
+            <Text style={t.t1}>{'Just say what\nyou want to do.'}</Text>
             <View style={styles.samples}>
               {SAMPLES.map((s) => (
-                <Tap key={s} onPress={() => runSample(s)} style={styles.sample} accessibilityRole="button">
-                  <AppText style={Type.body(13, 600)}>{s}</AppText>
-                </Tap>
+                <Chip key={s} label={s} onPress={() => runSample(s)} />
               ))}
             </View>
           </Entrance>
-        )}
+        ) : null}
 
-        {(speech.listening || speech.transcript) && (
-          <Entrance distance={8} style={styles.card}>
-            {speech.listening && (
-              <View style={styles.listeningRow}>
-                <View style={styles.liveDot} />
-                <AppText style={Type.eyebrow(Colors.coral)}>listening</AppText>
-              </View>
-            )}
-            <AppText style={Type.heading(20)}>{speech.transcript ? `“${speech.transcript}”` : 'say something...'}</AppText>
+        {speech.listening || speech.transcript ? (
+          <Entrance distance={8}>
+            <Card style={styles.card}>
+              {speech.listening ? (
+                <View style={styles.listeningRow}>
+                  <View style={styles.liveDot} />
+                  <Text style={[t.kick, { color: C.blue600 }]}>Listening</Text>
+                </View>
+              ) : null}
+              <Text style={styles.transcript}>{speech.transcript ? `“${speech.transcript}”` : 'Say something…'}</Text>
+            </Card>
           </Entrance>
-        )}
+        ) : null}
 
-        {processing && (
+        {processing ? (
           <View style={styles.processing}>
-            <ActivityIndicator color={Colors.ink} />
-            <AppText style={Type.body(14, 600, Colors.textSecondary)}>processing...</AppText>
+            <ActivityIndicator color={C.ink} />
+            <Text style={t.cap}>Working it out…</Text>
           </View>
-        )}
+        ) : null}
 
-        {(reply || speech.error) && (
-          <Entrance distance={8} style={[styles.reply, !(reply?.ok ?? false) && styles.replyError]}>
-            <Icon
-              name={reply?.ok ? 'assistant' : 'error-outline'}
-              size={20}
-              color={reply?.ok ? Colors.primary : Colors.coral}
-            />
-            <AppText style={[Type.body(14, 600), styles.flex]}>{reply?.text ?? speech.error}</AppText>
-            <Tap onPress={() => setReply(null)} hitSlop={8} accessibilityLabel="Dismiss">
-              <Icon name="close" size={18} color={Colors.textSecondary} />
-            </Tap>
+        {reply || speech.error ? (
+          <Entrance distance={8}>
+            <Notice
+              icon={reply?.ok ? 'sparkles-outline' : undefined}
+              tone={reply?.ok ? 'soft' : 'err'}
+              style={styles.reply}>
+              {reply?.text ?? speech.error}
+            </Notice>
+            <Pressable onPress={() => setReply(null)} hitSlop={8} accessibilityLabel="Dismiss" style={styles.dismiss}>
+              <Icon name="close" size={16} color={C.muted} />
+            </Pressable>
           </Entrance>
-        )}
+        ) : null}
       </View>
 
       <View style={styles.micArea}>
@@ -178,12 +186,10 @@ export default function SpeechScreen() {
           disabled={processing}
           onPress={() => (speech.listening ? speech.stop() : speech.start())}
         />
-        <AppText style={Type.body(13, 600, Colors.textSecondary)}>
-          {speech.listening ? 'Tap to stop' : 'Tap to speak'}
-        </AppText>
+        <Text style={t.cap}>{speech.listening ? 'Tap to stop' : 'Tap to speak'}</Text>
       </View>
 
-      {pending && (
+      {pending ? (
         <ConfirmSheet
           mode={pending.mode}
           initialAmount={pending.amount}
@@ -193,100 +199,38 @@ export default function SpeechScreen() {
           onCancel={() => setPending(null)}
           onConfirm={execute}
         />
-      )}
+      ) : null}
 
-      <SuccessDialog
-        visible={done != null}
-        title={done?.title ?? ''}
-        message={done?.message ?? ''}
-        onDone={() => setDone(null)}
-      />
+      <SuccessDialog visible={done != null} title={done?.title ?? ''} message={done?.message ?? ''} onDone={() => setDone(null)} />
 
       <AppDialog visible={balance != null} onClose={() => setBalance(null)}>
-        <AppText style={Type.eyebrow()}>available balance</AppText>
-        <AppText style={[Type.amount(40), styles.balance]}>{formatINR(balance ?? 0)}</AppText>
-        <AppButton label="Done" onPress={() => setBalance(null)} style={styles.stretch} />
+        <Text style={t.kick}>Available balance</Text>
+        <Text style={styles.balance}>{formatINR(balance ?? 0)}</Text>
+        <DialogActions actions={[{ text: 'Done', onPress: () => setBalance(null) }]} />
       </AppDialog>
     </Screen>
   );
 }
 
-function MicButton({ listening, disabled, onPress }: { listening: boolean; disabled: boolean; onPress: () => void }) {
-  const reduce = useReducedMotion();
-  const glow = useSharedValue(0);
-  useEffect(() => {
-    if (listening && !reduce) glow.set(withRepeat(withTiming(1, { duration: 1200, easing: Motion.out }), -1, false));
-    else glow.set(withTiming(0, { duration: Motion.fast }));
-  }, [listening, reduce, glow]);
-  const ring = useAnimatedStyle(() => ({
-    opacity: 0.35 * (1 - glow.get()),
-    transform: [{ scale: 1 + glow.get() * 0.6 }],
-  }));
-
-  return (
-    <View style={styles.micWrap}>
-      <Animated.View style={[styles.micRing, ring]} />
-      <Tap
-        scale={0.94}
-        onPress={onPress}
-        disabled={disabled}
-        style={[styles.mic, listening && styles.micActive, disabled && styles.micDisabled]}
-        accessibilityRole="button"
-        accessibilityLabel={listening ? 'Stop listening' : 'Start listening'}>
-        <Icon name={listening ? 'stop' : 'mic'} size={36} color={listening ? Colors.white : Colors.pop} />
-      </Tap>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  content: { flexGrow: 1 },
-  flex: { flex: 1 },
-  body: { flex: 1, marginTop: 24, gap: 16 },
-  intro: { gap: 10 },
-  introTitle: { lineHeight: 34 },
-  samples: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 },
-  sample: {
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 40,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  card: {
-    padding: 20,
-    gap: 10,
-    borderRadius: 20,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
+const useStyles = makeStyles((C) => ({
+  body: { flex: 1, marginTop: 18, gap: 14 },
+  intro: { gap: 18 },
+  samples: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  card: { gap: 10, padding: 20 },
   listeningRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: Colors.coral },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.blue, boxShadow: '0 0 8px rgba(77,169,252,0.8)' },
+  transcript: { fontFamily: Fonts.light, fontSize: 24, lineHeight: 30, letterSpacing: -0.4, color: C.ink },
   processing: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 4 },
-  reply: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: Colors.primaryLight,
+  reply: { paddingRight: 40 },
+  dismiss: { position: 'absolute', right: 14, top: 14 },
+  micArea: { alignItems: 'center', gap: 2, paddingBottom: 8 },
+  balance: {
+    marginTop: 8,
+    fontFamily: Fonts.light,
+    fontSize: 40,
+    lineHeight: 46,
+    letterSpacing: -1.4,
+    color: C.ink,
+    fontVariant: ['tabular-nums'],
   },
-  replyError: { backgroundColor: alpha(Colors.coral, 0.08) },
-  micArea: { alignItems: 'center', gap: 14, paddingTop: 24 },
-  micWrap: { width: 120, height: 120, alignItems: 'center', justifyContent: 'center' },
-  micRing: { position: 'absolute', width: 96, height: 96, borderRadius: 48, backgroundColor: Colors.coral },
-  mic: {
-    width: 96,
-    height: 96,
-    borderRadius: 34,
-    backgroundColor: Colors.ink,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  micActive: { backgroundColor: Colors.coral },
-  micDisabled: { opacity: 0.5 },
-  balance: { marginTop: 10 },
-  stretch: { alignSelf: 'stretch', marginTop: 22 },
-});
+}));

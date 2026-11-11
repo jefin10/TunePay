@@ -1,13 +1,10 @@
 import { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import Animated, { FadeInDown, FadeOutDown } from 'react-native-reanimated';
+import { Text, View } from 'react-native';
+import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { create } from 'zustand';
 
-import { Colors, Type } from '@/core/theme';
-
-import { AppText } from './AppText';
-import { Icon } from './Icon';
+import { Fonts, makeStyles, Radius } from '@/core/theme';
 
 type ToastKind = 'info' | 'success' | 'error';
 
@@ -27,49 +24,50 @@ const useToastStore = create<ToastState>()((set) => ({
   hide: () => set({ message: null }),
 }));
 
-/** Show a floating snackbar-style message. Callable from anywhere. */
+/** Show a short message in an ink pill at the top. Callable from anywhere. */
 export const toast = (message: string, kind: ToastKind = 'info') => useToastStore.getState().show(message, kind);
-
-const ICONS = { info: 'info-outline', success: 'check-circle', error: 'error-outline' } as const;
-const TINT = { info: Colors.white, success: Colors.mint, error: Colors.coral };
 
 /** Mount once near the root. */
 export function Toaster() {
   const { id, message, kind, hide } = useToastStore();
+  const styles = useStyles();
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
     if (!message) return;
-    const timer = setTimeout(hide, 2800);
+    const timer = setTimeout(hide, 2400);
     return () => clearTimeout(timer);
   }, [id, message, hide]);
 
   if (!message) return null;
   return (
-    <View pointerEvents="box-none" style={[styles.host, { bottom: insets.bottom + 96 }]}>
+    <View pointerEvents="none" style={[styles.host, { top: insets.top + 8 }]}>
       <Animated.View
         key={id}
-        entering={FadeInDown.duration(220)}
-        exiting={FadeOutDown.duration(180)}
+        entering={FadeInUp.duration(220)}
+        exiting={FadeOutUp.duration(180)}
         style={styles.toast}
         accessibilityLiveRegion="polite">
-        <Icon name={ICONS[kind]} size={18} color={TINT[kind]} />
-        <AppText style={[Type.body(14, 600, Colors.white), styles.text]}>{message}</AppText>
+        {/* An error carries a red dot as well as its words — never colour alone. */}
+        {kind === 'error' ? <View style={styles.dot} /> : null}
+        <Text style={styles.text}>{message}</Text>
       </Animated.View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  host: { position: 'absolute', left: 16, right: 16 },
+const useStyles = makeStyles((C) => ({
+  host: { position: 'absolute', left: 16, right: 16, alignItems: 'center' },
   toast: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    backgroundColor: Colors.ink,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    gap: 9,
+    backgroundColor: C.ink,
+    borderRadius: Radius.full,
+    paddingHorizontal: 18,
+    paddingVertical: 11,
+    boxShadow: '0 18px 34px -20px #0A0A0BAA',
   },
-  text: { flex: 1 },
-});
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.danger },
+  text: { color: C.white, fontFamily: Fonts.semibold, fontSize: 14, flexShrink: 1 },
+}));

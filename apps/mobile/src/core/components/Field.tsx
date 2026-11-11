@@ -1,50 +1,76 @@
-import type { ReactNode } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { useState, type ReactNode, type Ref } from 'react';
+import { Text, TextInput, View, type TextInputInstance, type TextInputProps } from 'react-native';
 
-import { Colors, Type } from '@/core/theme';
-
-import { AppText } from './AppText';
+import { Fonts, makeStyles, Radius, Spacing, useColors } from '@/core/theme';
 
 type FieldProps = TextInputProps & {
+  /** Omit for a placeholder-only field. */
   label?: string;
   left?: ReactNode;
   right?: ReactNode;
   error?: string | null;
+  ref?: Ref<TextInputInstance>;
 };
 
-/** Labelled text input on a white bordered surface. */
-export function Field({ label, left, right, error, style, ...rest }: FieldProps) {
+/** A soft-fill row that turns white with a blue inset ring on focus. */
+export function Field({ label, left, right, error, style, onFocus, onBlur, ref, ...rest }: FieldProps) {
+  const C = useColors();
+  const styles = useStyles();
+  const [focused, setFocused] = useState(false);
+
   return (
     <View style={styles.wrap}>
-      {label && <AppText style={Type.eyebrow()}>{label}</AppText>}
-      <View style={[styles.box, error ? styles.boxError : null]}>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
+      <View style={[styles.row, focused && styles.rowFocused, !!error && styles.rowError]}>
         {left}
         <TextInput
-          placeholderTextColor={Colors.textMuted}
-          selectionColor={Colors.primary}
+          ref={ref}
+          placeholderTextColor={C.muted}
+          selectionColor={C.blue}
+          onFocus={(e) => {
+            setFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setFocused(false);
+            onBlur?.(e);
+          }}
           {...rest}
-          style={[Type.body(16, 600), styles.input, style]}
+          style={[styles.input, style]}
         />
         {right}
       </View>
-      {error ? <AppText style={Type.body(12, 600, Colors.coral)}>{error}</AppText> : null}
+      {error ? <Text style={styles.error}>{error}</Text> : null}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { gap: 8 },
-  box: {
+const useStyles = makeStyles((C) => ({
+  wrap: { gap: 7 },
+  label: { fontSize: 12.5, color: C.inkSoft, fontFamily: Fonts.medium },
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    minHeight: 56,
+    backgroundColor: C.soft,
+    borderRadius: Radius.field,
+    borderCurve: 'continuous',
+    paddingHorizontal: Spacing.three,
   },
-  boxError: { borderColor: Colors.coral },
-  input: { flex: 1, paddingVertical: 14 },
-});
+  rowFocused: {
+    backgroundColor: C.white,
+    boxShadow: `inset 0 0 0 1.8px ${C.blue}`,
+  },
+  rowError: {
+    backgroundColor: C.soft,
+    boxShadow: `inset 0 0 0 1.5px ${C.danger}`,
+  },
+  input: {
+    flex: 1,
+    minHeight: 52,
+    fontSize: 15,
+    color: C.ink,
+    fontFamily: Fonts.regular,
+  },
+  error: { fontSize: 12, color: C.danger, fontFamily: Fonts.medium },
+}));

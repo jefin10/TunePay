@@ -1,18 +1,17 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { AppText, Icon, Shimmer, SkeletonBar, Tap } from '@/core/components';
-import { alpha, Colors, Type } from '@/core/theme';
-import { formatDate, formatINR, formatTime, relativeTime } from '@/core/utils/format';
+import { Badge, Icon, Skeleton, useText } from '@/core/components';
+import { Fonts, makeStyles, useColors } from '@/core/theme';
+import { formatINR, formatTime, relativeTime } from '@/core/utils/format';
 import type { TransactionItem } from '@/models/transaction';
 
-function DirectionIcon({ sent, size }: { sent: boolean; size: number }) {
+/** Money out is an ink arrow on a quiet tile; money in, the same tile with the arrow in the credit shade. */
+function DirectionTile({ sent }: { sent: boolean }) {
+  const C = useColors();
+  const styles = useStyles();
   return (
-    <View
-      style={[
-        styles.icon,
-        { width: size, height: size, backgroundColor: sent ? Colors.surfaceDim : alpha(Colors.mint, 0.12) },
-      ]}>
-      <Icon name={sent ? 'arrow-upward' : 'arrow-downward'} size={size * 0.47} color={sent ? Colors.ink : Colors.mint} />
+    <View style={styles.tile}>
+      <Icon name={sent ? 'arrow-up' : 'arrow-down'} size={18} color={sent ? C.ink : C.credit} />
     </View>
   );
 }
@@ -20,88 +19,88 @@ function DirectionIcon({ sent, size }: { sent: boolean; size: number }) {
 const title = (t: TransactionItem) => `${t.type === 'sent' ? 'To' : 'From'} ${t.counterpartyName}`;
 const signed = (t: TransactionItem) => `${t.type === 'sent' ? '-' : '+'}${formatINR(t.amount)}`;
 
-/** Compact row used in the home "recent activity" list. */
+function Amount({ tx }: { tx: TransactionItem }) {
+  const C = useColors();
+  const styles = useStyles();
+  return <Text style={[styles.amount, { color: tx.type === 'sent' ? C.ink : C.credit }]}>{signed(tx)}</Text>;
+}
+
+/** One row of the home screen's recent activity, inside a List. */
 export function ActivityRow({ tx, onPress }: { tx: TransactionItem; onPress?: () => void }) {
+  const styles = useStyles();
+  const t = useText();
   const sent = tx.type === 'sent';
-  const when = relativeTime(tx.timestamp);
   return (
-    <Tap scale={0.98} onPress={onPress} style={styles.activityRow} accessibilityRole="button">
-      <DirectionIcon sent={sent} size={38} />
-      <View style={styles.flex}>
-        <AppText style={Type.body(14, 700)} numberOfLines={1}>
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole="button"
+      style={({ pressed }) => [styles.row, pressed && styles.pressed]}>
+      <DirectionTile sent={sent} />
+      <View style={styles.grow}>
+        <Text style={t.r1} numberOfLines={1}>
           {title(tx)}
-        </AppText>
-        <AppText style={[Type.body(12, 500, Colors.textSecondary), styles.sub]}>
-          {when || (sent ? 'Sent' : 'Received')}
-        </AppText>
+        </Text>
+        <Text style={t.r2}>{relativeTime(tx.timestamp) || (sent ? 'Sent' : 'Received')}</Text>
       </View>
-      <AppText style={Type.body(15, 800, sent ? Colors.ink : Colors.mint)}>{signed(tx)}</AppText>
-    </Tap>
+      <Amount tx={tx} />
+    </Pressable>
   );
 }
 
-/** Card tile used on the history screen. */
+/** One row of the history list: the time, and a status badge when it did not simply go through. */
 export function TransactionCard({ tx }: { tx: TransactionItem }) {
-  const sent = tx.type === 'sent';
-  const statusColor = tx.status === 'completed' ? Colors.mint : tx.status === 'pending' ? Colors.warning : Colors.coral;
+  const styles = useStyles();
+  const t = useText();
+  const settled = tx.status === 'completed';
   return (
-    <View style={styles.card}>
-      <DirectionIcon sent={sent} size={44} />
-      <View style={styles.flex}>
-        <AppText style={Type.body(14, 700)} numberOfLines={1}>
+    <View style={styles.row}>
+      <DirectionTile sent={tx.type === 'sent'} />
+      <View style={styles.grow}>
+        <Text style={t.r1} numberOfLines={1}>
           {title(tx)}
-        </AppText>
+        </Text>
         <View style={styles.meta}>
-          <View style={[styles.status, { backgroundColor: alpha(statusColor, 0.12) }]}>
-            <AppText style={[Type.body(9, 800, statusColor), styles.statusText]}>{tx.status.toUpperCase()}</AppText>
-          </View>
-          <AppText style={Type.body(11, 500, Colors.textSecondary)}>
-            {[formatDate(tx.timestamp), formatTime(tx.timestamp)].filter(Boolean).join(' · ')}
-          </AppText>
+          <Text style={t.cap}>{formatTime(tx.timestamp) || (tx.type === 'sent' ? 'Sent' : 'Received')}</Text>
+          {!settled ? <Badge label={tx.status} variant={tx.status === 'failed' ? 'danger' : 'soft'} /> : null}
         </View>
       </View>
-      <AppText style={Type.amount(16, sent ? Colors.ink : Colors.mint)}>{signed(tx)}</AppText>
+      <Amount tx={tx} />
     </View>
   );
 }
 
 export function ActivityRowSkeleton() {
+  const styles = useStyles();
   return (
-    <View style={styles.activityRow}>
-      <Shimmer>
-        <View style={styles.skeleton}>
-          <SkeletonBar width={38} height={38} radius={12} />
-          <View style={[styles.flex, styles.skeletonText]}>
-            <SkeletonBar width={90} height={12} />
-            <SkeletonBar width={140} height={10} />
-          </View>
-          <SkeletonBar width={56} height={14} />
-        </View>
-      </Shimmer>
+    <View style={styles.row}>
+      <Skeleton style={styles.skTile} />
+      <View style={[styles.grow, styles.skText]}>
+        <Skeleton style={styles.skLine} />
+        <Skeleton style={styles.skLineShort} />
+      </View>
+      <Skeleton style={styles.skAmount} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  icon: { borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  activityRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14 },
-  sub: { marginTop: 3 },
-  card: {
-    flexDirection: 'row',
+const useStyles = makeStyles((C) => ({
+  grow: { flex: 1, minWidth: 0 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 15, minHeight: 66 },
+  pressed: { backgroundColor: C.soft },
+  tile: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: C.soft,
     alignItems: 'center',
-    gap: 14,
-    paddingVertical: 14,
-    paddingLeft: 14,
-    paddingRight: 16,
-    borderRadius: 18,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    justifyContent: 'center',
   },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
-  status: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  statusText: { letterSpacing: 0.6 },
-  skeleton: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  skeletonText: { gap: 7 },
-});
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 3 },
+  amount: { fontFamily: Fonts.medium, fontSize: 15, letterSpacing: -0.2, fontVariant: ['tabular-nums'] },
+  skTile: { width: 40, height: 40, borderRadius: 20 },
+  skText: { gap: 7 },
+  skLine: { width: 120, height: 12, borderRadius: 6 },
+  skLineShort: { width: 70, height: 10, borderRadius: 5 },
+  skAmount: { width: 64, height: 14, borderRadius: 7 },
+}));

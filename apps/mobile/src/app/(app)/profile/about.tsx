@@ -1,59 +1,44 @@
 import Constants from 'expo-constants';
-import { StyleSheet, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { AppLogo, AppText, Entrance, Screen, ScreenHeader } from '@/core/components';
-import { Colors, Type } from '@/core/theme';
-import { InfoRow, MenuGroup } from '@/features/profile/MenuRow';
+import { Cap, InfoRow, List, LiquidGlass, LogoMark, Screen, Stagger, T3, TopNav, useText } from '@/core/components';
+import { makeStyles } from '@/core/theme';
 
 export default function AboutScreen() {
+  const styles = useStyles();
+  const t = useText();
   const version = Constants.expoConfig?.version ?? '1.0.0';
   return (
     <Screen>
-      <Entrance>
-        <ScreenHeader title="about" />
-        <View style={styles.heading}>
-          <AppText style={Type.eyebrow()}>about</AppText>
-          <AppText style={[Type.heading(30, 800), styles.title]}>{'TunePay\nApp.'}</AppText>
-        </View>
-
+      <TopNav title="About" />
+      <Stagger>
         <View style={styles.brand}>
-          <View style={styles.logo}>
-            <AppLogo type="icon" width={44} height={44} />
-          </View>
+          <LiquidGlass radius={26} weight="strong" style={styles.logo}>
+            <LogoMark size={40} />
+          </LiquidGlass>
           <View>
-            <AppText style={Type.heading(20)}>TunePay</AppText>
-            <AppText style={Type.body(13, 500, Colors.textSecondary)}>Version {version}</AppText>
+            <T3>TunePay</T3>
+            <Cap>Version {version}</Cap>
           </View>
         </View>
 
-        <AppText style={[Type.body(14, 500, Colors.textGrayDark), styles.blurb]}>
+        <Text style={[t.soft, styles.blurb]}>
           Pay with your voice. TunePay lets you send and receive money just by speaking. Built for speed, designed for
           trust.
-        </AppText>
+        </Text>
 
-        <MenuGroup>
+        <List>
           <InfoRow label="Version" value={version} />
           <InfoRow label="Platform" value="React Native · Expo" />
           <InfoRow label="License" value="Educational use" />
-        </MenuGroup>
-      </Entrance>
+        </List>
+      </Stagger>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  heading: { marginTop: 22, marginBottom: 22, gap: 6 },
-  title: { lineHeight: 34 },
-  brand: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  logo: {
-    width: 72,
-    height: 72,
-    borderRadius: 22,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  blurb: { marginVertical: 22, lineHeight: 21 },
-});
+const useStyles = makeStyles(() => ({
+  brand: { flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 12 },
+  logo: { width: 76, height: 76, alignItems: 'center', justifyContent: 'center' },
+  blurb: { marginVertical: 24 },
+}));

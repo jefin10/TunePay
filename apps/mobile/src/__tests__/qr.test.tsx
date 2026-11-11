@@ -52,7 +52,7 @@ describe('scanner', () => {
     expect(screen.getByText('₹150')).toBeOnTheScreen();
     await press(screen.getByText('Proceed to pay'));
 
-    expect(await screen.findByText('pay to upi id')).toBeOnTheScreen();
+    expect(await screen.findByText('Pay a UPI ID')).toBeOnTheScreen();
     expect(await screen.findByText('+919123456789')).toBeOnTheScreen();
     expect(screen.getByDisplayValue('150')).toBeOnTheScreen();
   });

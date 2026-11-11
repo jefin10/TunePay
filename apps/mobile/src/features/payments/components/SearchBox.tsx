@@ -1,57 +1,50 @@
-import { ActivityIndicator, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { ActivityIndicator, Pressable, TextInput, type TextInputProps } from 'react-native';
 
-import { Icon, Tap, type IconName } from '@/core/components';
-import { Colors, Type } from '@/core/theme';
+import { Icon, LiquidGlass, type IconName } from '@/core/components';
+import { Fonts, makeStyles, Radius, useColors } from '@/core/theme';
 
-/** Input with a leading icon and an ink search button. */
+/** A glass field with a leading icon and a round ink search button. */
 export function SearchBox({
   icon,
   loading,
   onSearch,
   ...input
 }: TextInputProps & { icon: IconName; loading: boolean; onSearch: () => void }) {
+  const C = useColors();
+  const styles = useStyles();
   return (
-    <View style={styles.box}>
-      <Icon name={icon} size={18} color={Colors.textSecondary} />
+    <LiquidGlass radius={Radius.field} weight="strong" flat bevel={false} style={styles.box}>
+      <Icon name={icon} size={18} color={C.muted} />
       <TextInput
-        placeholderTextColor={Colors.textMuted}
+        placeholderTextColor={C.muted}
+        selectionColor={C.blue}
         returnKeyType="search"
         onSubmitEditing={onSearch}
         autoCorrect={false}
         {...input}
-        style={[Type.body(15, 600), styles.input]}
+        style={styles.input}
       />
-      <Tap
-        scale={0.92}
+      <Pressable
         onPress={loading ? undefined : onSearch}
-        style={styles.button}
+        style={({ pressed }) => [styles.button, pressed && styles.pressed]}
         accessibilityRole="button"
         accessibilityLabel="Search">
-        {loading ? <ActivityIndicator size="small" color={Colors.white} /> : <Icon name="search" size={18} color={Colors.white} />}
-      </Tap>
-    </View>
+        {loading ? <ActivityIndicator size="small" color={C.white} /> : <Icon name="arrow-forward" size={18} color={C.white} />}
+      </Pressable>
+    </LiquidGlass>
   );
 }
 
-const styles = StyleSheet.create({
-  box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingLeft: 16,
-    paddingRight: 9,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
-    backgroundColor: Colors.surface,
-  },
-  input: { flex: 1, paddingVertical: 18 },
+const useStyles = makeStyles((C) => ({
+  box: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 58, paddingLeft: 16, paddingRight: 8 },
+  input: { flex: 1, fontFamily: Fonts.regular, fontSize: 15.5, color: C.ink, paddingVertical: 14 },
   button: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: Colors.ink,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: C.ink,
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+  pressed: { opacity: 0.72 },
+}));

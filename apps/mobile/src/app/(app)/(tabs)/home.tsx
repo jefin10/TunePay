@@ -1,28 +1,46 @@
 import { router, type Href } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
-import { AppText, Icon, Screen, Shimmer, SkeletonBar, Stagger, Tap, toast, type IconName } from '@/core/components';
-import { alpha, Colors, Type } from '@/core/theme';
+import {
+  Avatar,
+  Cap,
+  Commit,
+  CommitButton,
+  Empty,
+  Icon,
+  IconButton,
+  List,
+  Row,
+  RowIcon,
+  Screen,
+  Section,
+  Skeleton,
+  Stagger,
+  Surface,
+  toast,
+  type IconName,
+} from '@/core/components';
+import { Fonts, makeStyles, useColors } from '@/core/theme';
 import { formatINR, greeting } from '@/core/utils/format';
 import { ActivityRow, ActivityRowSkeleton } from '@/features/account/components/TransactionRow';
 import { useBalance, useProfile, useRefreshAccount, useTransactions } from '@/features/account/hooks';
 
 const QUICK_ACTIONS: { icon: IconName; label: string; href: Href }[] = [
-  { icon: 'qr-code-scanner', label: 'Scan', href: '/qr-scanner' },
-  { icon: 'smartphone', label: 'To phone', href: '/pay/phone' },
-  { icon: 'account-balance-wallet', label: 'Balance', href: '/balance' },
-  { icon: 'receipt-long', label: 'History', href: '/history' },
+  { icon: 'scan-outline', label: 'Scan', href: '/qr-scanner' },
+  { icon: 'phone-portrait-outline', label: 'To phone', href: '/pay/phone' },
+  { icon: 'people-outline', label: 'Contacts', href: '/pay/contacts' },
+  { icon: 'at-outline', label: 'UPI ID', href: '/pay/upi' },
 ];
 
-const MOVE_MONEY: { icon: IconName; title: string; subtitle: string; href: Href }[] = [
-  { icon: 'contacts', title: 'To contact', subtitle: 'From your phone', href: '/pay/contacts' },
-  { icon: 'alternate-email', title: 'To UPI ID', subtitle: 'Any UPI handle', href: '/pay/upi' },
-  { icon: 'call-received', title: 'Request', subtitle: 'Ask anyone to pay you', href: '/requests' },
-  { icon: 'qr-code-2', title: 'My QR', subtitle: 'Show & get paid', href: '/my-qr' },
+const MORE: { icon: IconName; title: string; href: Href }[] = [
+  { icon: 'arrow-down-circle-outline', title: 'Request money', href: '/requests' },
+  { icon: 'qr-code-outline', title: 'My QR', href: '/my-qr' },
 ];
 
 export default function HomeScreen() {
+  const C = useColors();
+  const styles = useStyles();
   const [hidden, setHidden] = useState(false);
   const profile = useProfile();
   const balance = useBalance();
@@ -42,276 +60,144 @@ export default function HomeScreen() {
   };
 
   return (
-    <Screen onRefresh={refresh} refreshing={refreshing} edges={['top']} contentStyle={styles.content}>
+    <Screen docked onRefresh={refresh} refreshing={refreshing}>
       <Stagger>
-        {/* Header */}
-        <View style={styles.topRow}>
-          <View style={styles.avatar}>
-            <AppText style={Type.body(18, 800, Colors.pop)}>{userName ? userName[0]!.toUpperCase() : 'U'}</AppText>
-          </View>
-          <View style={styles.flex}>
-            <AppText style={Type.body(12.5, 600, Colors.textSecondary)}>{greeting()}</AppText>
-            <AppText style={[Type.heading(19), styles.name]} numberOfLines={1}>
+        <View style={styles.nav}>
+          <Avatar name={userName || 'U'} size={44} dark />
+          <View style={styles.grow}>
+            <Cap>{greeting()}</Cap>
+            <Text style={styles.name} numberOfLines={1}>
               {userName || 'Welcome back'}
-            </AppText>
+            </Text>
           </View>
-          <HeaderButton icon="qr-code-scanner" label="Scan QR" onPress={() => router.push('/qr-scanner')} />
-          <HeaderButton icon="notifications-none" label="Notifications" onPress={() => toast('No new notifications')} />
+          <IconButton icon="scan-outline" accessibilityLabel="Scan QR" onPress={() => router.push('/qr-scanner')} />
+          <IconButton
+            icon="notifications-outline"
+            accessibilityLabel="Notifications"
+            onPress={() => toast('No new notifications')}
+          />
         </View>
 
-        {/* Wallet hero */}
-        <Tap scale={0.985} onPress={() => router.push('/balance')} style={styles.wallet} accessibilityRole="button">
-          <View style={styles.glow} />
-          <View style={styles.walletHead}>
-            <AppText style={Type.eyebrow(alpha(Colors.white, 0.55))}>available balance</AppText>
-            <Tap
-              scale={0.86}
+        {/* The one dark panel on the screen: the wallet. */}
+        <Commit
+          kicker="Available balance"
+          style={styles.wallet}
+          right={
+            <Pressable
               hitSlop={10}
               onPress={() => setHidden((h) => !h)}
+              accessibilityRole="button"
               accessibilityLabel={hidden ? 'Show balance' : 'Hide balance'}>
-              <Icon name={hidden ? 'visibility-off' : 'visibility'} size={18} color={alpha(Colors.white, 0.7)} />
-            </Tap>
-          </View>
+              <Icon name={hidden ? 'eye-off-outline' : 'eye-outline'} size={19} color={C.commitSoft} />
+            </Pressable>
+          }>
           <View style={styles.balanceLine}>
             {balance.isLoading ? (
-              <Shimmer>
-                <SkeletonBar width={180} height={38} dark />
-              </Shimmer>
+              <Skeleton style={styles.balanceSkeleton} />
             ) : balance.data == null ? (
-              <AppText style={Type.amount(30, alpha(Colors.white, 0.7))}>Unavailable</AppText>
+              <Text style={[styles.balance, styles.unavailable]}>Unavailable</Text>
             ) : (
-              <AppText style={Type.amount(38, Colors.white)}>
-                {hidden ? '₹ ••••••' : formatINR(balance.data)}
-              </AppText>
+              <Text style={styles.balance}>{hidden ? '₹ ••••••' : formatINR(balance.data)}</Text>
             )}
           </View>
-          <View style={styles.walletFoot}>
-            <AppText style={[Type.body(12.5, 600, alpha(Colors.white, 0.5)), styles.flex]} numberOfLines={1}>
-              {upiId}
-            </AppText>
-            <AppText style={Type.body(12.5, 700, Colors.pop)}>View statement</AppText>
-            <Icon name="north-east" size={15} color={Colors.pop} />
+          <Text style={styles.upi} numberOfLines={1}>
+            {upiId}
+          </Text>
+          <View style={styles.walletActions}>
+            <CommitButton label="Statement" icon="receipt-outline" onPress={() => router.push('/history')} />
+            <CommitButton label="Balance" icon="wallet-outline" onPress={() => router.push('/balance')} />
           </View>
-        </Tap>
+        </Commit>
 
-        {/* Quick pay */}
-        <View style={styles.section}>
-          <AppText style={Type.eyebrow()}>quick pay</AppText>
-          <View style={styles.quick}>
-            {QUICK_ACTIONS.map((a, i) => (
-              <View key={a.label} style={styles.quickCell}>
-                {i > 0 && <View style={styles.quickDivider} />}
-                <Tap onPress={() => router.push(a.href)} style={styles.quickItem} accessibilityRole="button">
-                  <Icon name={a.icon} size={23} />
-                  <AppText style={Type.body(12, 700)}>{a.label}</AppText>
-                </Tap>
-              </View>
-            ))}
-          </View>
+        <View style={styles.quick}>
+          {QUICK_ACTIONS.map((a) => (
+            <Surface key={a.label} onPress={() => router.push(a.href)} style={styles.quickTile} accessibilityLabel={a.label}>
+              <Icon name={a.icon} size={22} />
+              <Text style={styles.quickLabel} numberOfLines={1}>
+                {a.label}
+              </Text>
+            </Surface>
+          ))}
         </View>
 
-        {/* Voice banner */}
-        <Tap onPress={() => router.push('/speech')} style={styles.voice} accessibilityRole="button">
+        <Surface onPress={() => router.push('/speech')} style={styles.voice} accessibilityLabel="Voice pay">
           <View style={styles.voiceIcon}>
-            <Icon name="graphic-eq" size={24} color={Colors.pop} />
+            <Icon name="mic" size={20} color={C.white} />
           </View>
-          <View style={styles.flex}>
-            <AppText style={Type.eyebrow(Colors.ink)}>voice pay</AppText>
+          <View style={styles.grow}>
+            <Text style={styles.voiceKicker}>Voice pay</Text>
             {/* Non-breaking space: wrap before the number, not inside it. */}
-            <AppText style={[Type.heading(16), styles.voiceTitle]}>{'“Send ₹500 to 98765 43210”'}</AppText>
-            <AppText style={Type.body(12, 500, Colors.textSecondary)}>Say it once. We handle the rest.</AppText>
+            <Text style={styles.voiceTitle}>{'“Send ₹500 to 98765 43210”'}</Text>
           </View>
-          <View style={styles.voiceArrow}>
-            <Icon name="arrow-forward" size={17} color={Colors.pop} />
-          </View>
-        </Tap>
+          <Icon name="chevron-forward" size={17} color={C.muted} />
+        </Surface>
 
-        {/* Move money */}
-        <View style={styles.section}>
-          <AppText style={Type.eyebrow()}>move money</AppText>
-          <View style={styles.grid}>
-            {MOVE_MONEY.map((c) => (
-              <Tap key={c.title} onPress={() => router.push(c.href)} style={styles.gridCard} accessibilityRole="button">
-                <View style={styles.gridHead}>
-                  <View style={styles.gridIcon}>
-                    <Icon name={c.icon} size={19} />
-                  </View>
-                  <Icon name="north-east" size={16} color={Colors.textMuted} />
-                </View>
-                <AppText style={Type.heading(15)}>{c.title}</AppText>
-                <AppText style={[Type.body(12, 500, Colors.textSecondary), styles.gridSub]}>{c.subtitle}</AppText>
-              </Tap>
+        <Section title="Move money" delay={120}>
+          <List>
+            {MORE.map((m) => (
+              <Row
+                key={m.title}
+                left={<RowIcon name={m.icon} />}
+                title={m.title}
+                chevron
+                onPress={() => router.push(m.href)}
+              />
             ))}
-          </View>
-        </View>
+          </List>
+        </Section>
 
-        {/* Recent activity */}
-        <View style={styles.recent}>
-          <View style={styles.recentHead}>
-            <AppText style={Type.eyebrow()}>recent activity</AppText>
-            <Tap scale={0.94} onPress={() => router.push('/history')} hitSlop={8}>
-              <AppText style={Type.body(13, 700, Colors.primary)}>See all</AppText>
-            </Tap>
-          </View>
+        <Section title="Recent activity" action="See all" onAction={() => router.push('/history')} delay={180}>
           {transactions.isLoading ? (
-            [0, 1, 2].map((i) => <ActivityRowSkeleton key={i} />)
+            <List>
+              {[0, 1, 2].map((i) => (
+                <ActivityRowSkeleton key={i} />
+              ))}
+            </List>
           ) : recent.length === 0 ? (
-            <View style={styles.empty}>
-              <View style={styles.emptyIcon}>
-                <Icon name="receipt-long" size={22} color={Colors.textSecondary} />
-              </View>
-              <AppText style={Type.body(14, 700)}>Nothing here yet</AppText>
-              <AppText style={Type.body(12, 500, Colors.textSecondary)}>Your first payment will show up here.</AppText>
-            </View>
+            <Empty icon="receipt-outline" title="Nothing here yet" />
           ) : (
-            recent.map((tx, i) => (
-              <View key={`${tx.timestamp}-${i}`} style={i > 0 ? styles.divided : null}>
-                <ActivityRow tx={tx} onPress={() => router.push('/history')} />
-              </View>
-            ))
+            <List>
+              {recent.map((tx, i) => (
+                <ActivityRow key={`${tx.timestamp}-${i}`} tx={tx} onPress={() => router.push('/history')} />
+              ))}
+            </List>
           )}
-        </View>
+        </Section>
       </Stagger>
     </Screen>
   );
 }
 
-function HeaderButton({ icon, label, onPress }: { icon: IconName; label: string; onPress: () => void }) {
-  return (
-    <Tap onPress={onPress} style={styles.headerButton} accessibilityRole="button" accessibilityLabel={label}>
-      <Icon name={icon} size={20} />
-    </Tap>
-  );
-}
-
-const styles = StyleSheet.create({
-  content: { paddingTop: 12, gap: 0 },
-  flex: { flex: 1 },
-  topRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 22 },
-  avatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 15,
-    backgroundColor: Colors.ink,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 3,
+const useStyles = makeStyles((C) => ({
+  grow: { flex: 1, minWidth: 0 },
+  nav: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, marginBottom: 20 },
+  name: { fontFamily: Fonts.medium, fontSize: 18, color: C.ink, letterSpacing: -0.3, marginTop: 1 },
+  wallet: { paddingVertical: 22 },
+  balanceLine: { minHeight: 46, justifyContent: 'center' },
+  balance: {
+    fontFamily: Fonts.light,
+    fontSize: 40,
+    lineHeight: 46,
+    letterSpacing: -1.4,
+    color: C.commitInk,
+    fontVariant: ['tabular-nums'],
   },
-  name: { marginTop: 3 },
-  headerButton: {
-    width: 46,
-    height: 46,
-    borderRadius: 15,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  wallet: {
-    backgroundColor: Colors.ink,
-    borderRadius: 28,
-    paddingHorizontal: 24,
-    paddingVertical: 22,
-    overflow: 'hidden',
-    shadowColor: Colors.ink,
-    shadowOpacity: 0.22,
-    shadowRadius: 28,
-    shadowOffset: { width: 0, height: 14 },
-    elevation: 10,
-  },
-  glow: {
-    position: 'absolute',
-    right: -64,
-    top: -64,
-    width: 188,
-    height: 188,
-    borderRadius: 94,
-    backgroundColor: alpha(Colors.pop, 0.1),
-  },
-  walletHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  balanceLine: { marginTop: 18, minHeight: 44, justifyContent: 'center' },
-  walletFoot: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 22 },
-  section: { marginTop: 30, gap: 12 },
-  quick: {
-    flexDirection: 'row',
-    backgroundColor: Colors.surface,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingVertical: 16,
-  },
-  quickCell: { flex: 1, flexDirection: 'row', alignItems: 'center' },
-  quickDivider: { width: 1, height: 34, backgroundColor: Colors.divider },
-  quickItem: { flex: 1, alignItems: 'center', gap: 9 },
-  voice: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 15,
-    marginTop: 28,
-    paddingVertical: 16,
-    paddingLeft: 18,
-    paddingRight: 16,
-    borderRadius: 20,
-    backgroundColor: Colors.popSoft,
-  },
+  unavailable: { fontSize: 28, color: C.commitSoft },
+  balanceSkeleton: { width: 190, height: 38, backgroundColor: 'rgba(255,255,255,0.12)' },
+  upi: { marginTop: 6, fontFamily: Fonts.regular, fontSize: 13, color: C.commitSoft },
+  walletActions: { flexDirection: 'row', gap: 8, marginTop: 20 },
+  quick: { flexDirection: 'row', gap: 8, marginTop: 14 },
+  quickTile: { flex: 1, flexDirection: 'column', gap: 8, paddingVertical: 16, paddingHorizontal: 4 },
+  quickLabel: { fontFamily: Fonts.semibold, fontSize: 12, color: C.ink },
+  voice: { marginTop: 14 },
   voiceIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 15,
-    backgroundColor: Colors.ink,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: C.ink,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  voiceTitle: { marginTop: 5, marginBottom: 2 },
-  voiceArrow: {
-    width: 34,
-    height: 34,
-    borderRadius: 11,
-    backgroundColor: Colors.ink,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  gridCard: {
-    width: '47.8%',
-    flexGrow: 1,
-    padding: 16,
-    borderRadius: 18,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  gridHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  gridIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
-    backgroundColor: Colors.surfaceDim,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  gridSub: { marginTop: 3 },
-  recent: {
-    marginTop: 30,
-    paddingTop: 18,
-    paddingHorizontal: 18,
-    paddingBottom: 10,
-    borderRadius: 20,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  recentHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  divided: { borderTopWidth: 1, borderTopColor: Colors.divider },
-  empty: { alignItems: 'center', paddingTop: 26, paddingBottom: 24, gap: 4 },
-  emptyIcon: {
-    width: 46,
-    height: 46,
-    borderRadius: 15,
-    backgroundColor: Colors.surfaceDim,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-});
+  voiceKicker: { fontFamily: Fonts.semibold, fontSize: 12.5, color: C.blue600 },
+  voiceTitle: { fontFamily: Fonts.medium, fontSize: 15, color: C.ink, marginTop: 2 },
+}));

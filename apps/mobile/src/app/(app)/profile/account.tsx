@@ -1,14 +1,16 @@
-import { StyleSheet, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { AppText, Avatar, Card, Chip, Entrance, Icon, Screen, ScreenHeader, Tap } from '@/core/components';
+import { Avatar, Badge, Cap, Card, Icon, InfoRow, List, Screen, Section, Stagger, Surface, T3, TopNav, useText } from '@/core/components';
 import { useSession } from '@/core/storage/session';
-import { alpha, Colors, Type } from '@/core/theme';
+import { Fonts, makeStyles, useColors } from '@/core/theme';
 import { formatINR } from '@/core/utils/format';
 import { useBalance, useProfile } from '@/features/account/hooks';
-import { InfoRow, MenuGroup } from '@/features/profile/MenuRow';
 import { useCopyUpi } from '@/features/profile/use-copy-upi';
 
 export default function AccountDetailsScreen() {
+  const C = useColors();
+  const styles = useStyles();
+  const t = useText();
   const profile = useProfile();
   const balance = useBalance();
   const phone = useSession((s) => s.phoneNumber) ?? '—';
@@ -23,70 +25,60 @@ export default function AccountDetailsScreen() {
         balance.refetch();
       }}
       refreshing={profile.isRefetching || balance.isRefetching}>
-      <Entrance>
-        <ScreenHeader title="account details" />
-        <View style={styles.heading}>
-          <AppText style={Type.eyebrow()}>your account</AppText>
-          <AppText style={[Type.heading(30, 800), styles.title]}>{'Account\nDetails.'}</AppText>
+      <TopNav large title="Account details" />
+
+      <Stagger>
+        <View style={styles.person}>
+          <Avatar name={name} size={60} dark />
+          <View style={styles.grow}>
+            <T3 numberOfLines={1}>{name}</T3>
+            <Cap>{phone}</Cap>
+          </View>
         </View>
 
-        <Card style={styles.card}>
-          <View style={styles.person}>
-            <Avatar name={name} size={52} background={Colors.ink} color={Colors.pop} />
-            <View style={styles.flex}>
-              <AppText style={Type.heading(18)}>{name}</AppText>
-              <AppText style={Type.body(13, 500, Colors.textSecondary)}>{phone}</AppText>
-            </View>
+        <Surface onPress={copyUpi} accessibilityLabel="Copy UPI ID" style={styles.gap}>
+          <View style={styles.grow}>
+            <Text style={t.kick}>UPI ID</Text>
+            <Text style={[t.r1, styles.value]}>{upiId || 'N/A'}</Text>
           </View>
-          <Tap onPress={copyUpi} style={styles.upi} accessibilityLabel="Copy UPI ID">
-            <View style={styles.flex}>
-              <AppText style={Type.eyebrow(Colors.textSecondary, 10)}>upi id</AppText>
-              <AppText style={Type.body(15, 700)}>{upiId || 'N/A'}</AppText>
-            </View>
-            <Icon name="content-copy" size={18} color={Colors.primary} />
-          </Tap>
+          <Icon name="copy-outline" size={18} color={C.inkSoft} />
+        </Surface>
+
+        <Card style={styles.wallet}>
+          <View style={styles.grow}>
+            <Text style={t.kick}>Wallet balance</Text>
+            <Text style={styles.amount}>
+              {balance.data != null ? formatINR(balance.data) : balance.isLoading ? '…' : '—'}
+            </Text>
+          </View>
+          <Badge label="Active" variant="ink" />
         </Card>
 
-        <Card style={styles.card}>
-          <View style={styles.walletRow}>
-            <View style={styles.walletIcon}>
-              <Icon name="account-balance-wallet" />
-            </View>
-            <View style={styles.flex}>
-              <AppText style={Type.eyebrow()}>wallet balance</AppText>
-              <AppText style={[Type.amount(22), styles.amount]}>
-                {balance.data != null ? formatINR(balance.data) : balance.isLoading ? '…' : '—'}
-              </AppText>
-            </View>
-            <Chip label="active" background={alpha(Colors.mint, 0.12)} color={Colors.mint} />
-          </View>
-        </Card>
-
-        <MenuGroup>
-          <InfoRow icon="person-outline" label="Display name" value={name} />
-          <InfoRow icon="smartphone" label="Phone number" value={phone} />
-          <InfoRow icon="alternate-email" label="UPI handle" value={upiId || '—'} />
-        </MenuGroup>
-      </Entrance>
+        <Section title="Details">
+          <List>
+            <InfoRow icon="person-outline" label="Display name" value={name} />
+            <InfoRow icon="phone-portrait-outline" label="Phone number" value={phone} />
+            <InfoRow icon="at-outline" label="UPI handle" value={upiId || '—'} />
+          </List>
+        </Section>
+      </Stagger>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  heading: { marginTop: 22, marginBottom: 22, gap: 6 },
-  title: { lineHeight: 34 },
-  card: { marginBottom: 16, gap: 16 },
-  person: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  upi: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 14, backgroundColor: Colors.surfaceDim },
-  walletRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  walletIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: Colors.surfaceDim,
-    alignItems: 'center',
-    justifyContent: 'center',
+const useStyles = makeStyles((C) => ({
+  grow: { flex: 1, minWidth: 0 },
+  person: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 4 },
+  gap: { marginTop: 18 },
+  value: { marginTop: 3 },
+  wallet: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 12, padding: 18 },
+  amount: {
+    marginTop: 4,
+    fontFamily: Fonts.light,
+    fontSize: 28,
+    lineHeight: 32,
+    letterSpacing: -0.8,
+    color: C.ink,
+    fontVariant: ['tabular-nums'],
   },
-  amount: { marginTop: 4 },
-});
+}));

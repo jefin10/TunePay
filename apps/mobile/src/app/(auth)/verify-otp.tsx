@@ -1,19 +1,20 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { ApiException } from '@/core/api/client';
-import { AppButton, AppText, IconButton, Tap } from '@/core/components';
+import { AppButton } from '@/core/components';
 import { useSession } from '@/core/storage/session';
-import { Colors, Type } from '@/core/theme';
+import { Fonts, makeStyles } from '@/core/theme';
 import { sendOtp, verifyOtp } from '@/features/auth/api';
 import { AuthLayout } from '@/features/auth/components/AuthLayout';
-import { InlineError } from '@/features/auth/components/InlineError';
+import { InlineError, nudge } from '@/features/auth/components/InlineError';
 import { OtpInput, type OtpInputHandle } from '@/features/auth/components/OtpInput';
 
 const RESEND_SECONDS = 30;
 
 export default function VerifyOtpScreen() {
+  const styles = useStyles();
   const params = useLocalSearchParams<{ phone: string; devOtp?: string }>();
   const phone = params.phone ?? '';
   const [devOtp, setDevOtp] = useState(params.devOtp || null);
@@ -32,7 +33,7 @@ export default function VerifyOtpScreen() {
   }, [timer]);
 
   const reject = (message: string) => {
-    setError(message);
+    nudge(setError, message);
     setCode('');
     otpRef.current?.reject();
   };
@@ -77,15 +78,14 @@ export default function VerifyOtpScreen() {
 
   return (
     <AuthLayout
-      top={<IconButton icon="arrow-back" accessibilityLabel="Back" onPress={() => router.back()} />}
-      eyebrow="verify"
+      step={2}
       title={'Enter the\n6-digit code.'}
-      subtitle={
+      footer={
         <>
-          Sent to <AppText style={Type.body(15, 700)}>{phone}</AppText>. Check your messages.
+          <InlineError message={error} />
+          <AppButton label="Verify & continue" loading={verifying} onPress={() => verify()} />
         </>
-      }
-      footer={<AppButton label="Verify & continue" icon="arrow-forward" loading={verifying} onPress={() => verify()} />}>
+      }>
       <OtpInput
         ref={otpRef}
         onComplete={(otp) => {
@@ -93,32 +93,28 @@ export default function VerifyOtpScreen() {
           verify(otp);
         }}
       />
-      <InlineError message={error} />
 
       <View style={styles.resendRow}>
-        <AppText style={Type.body(13, 500, Colors.textSecondary)}>{"Didn't get it?"}</AppText>
+        <Text style={styles.prompt}>{"Didn't get it?"}</Text>
         {timer > 0 ? (
-          <AppText style={Type.body(13, 700)}>Resend in {timer}s</AppText>
+          <Text style={styles.count}>Resend in {timer}s</Text>
         ) : (
-          <Tap scale={0.92} onPress={resend} disabled={sending} accessibilityRole="button">
-            <AppText style={[Type.body(13, 800, sending ? Colors.textMuted : Colors.primary), !sending && styles.underline]}>
-              {sending ? 'Sending' : 'Resend code'}
-            </AppText>
-          </Tap>
+          <Pressable onPress={resend} disabled={sending} accessibilityRole="button" hitSlop={8}>
+            <Text style={[styles.link, sending && styles.dim]}>{sending ? 'Sending' : 'Resend code'}</Text>
+          </Pressable>
         )}
       </View>
 
-      {__DEV__ && devOtp ? (
-        <AppText style={[Type.body(12, 600, Colors.textMuted), styles.devHint]}>
-          Dev build · backend returned code {devOtp}
-        </AppText>
-      ) : null}
+      {__DEV__ && devOtp ? <Text style={styles.devHint}>Dev build · backend returned code {devOtp}</Text> : null}
     </AuthLayout>
   );
 }
 
-const styles = StyleSheet.create({
-  resendRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 24 },
-  underline: { textDecorationLine: 'underline' },
-  devHint: { marginTop: 12 },
-});
+const useStyles = makeStyles((C) => ({
+  resendRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 24 },
+  prompt: { fontFamily: Fonts.regular, fontSize: 13.5, color: C.fieldTextSoft },
+  count: { fontFamily: Fonts.semibold, fontSize: 13.5, color: C.fieldTextDim },
+  link: { fontFamily: Fonts.bold, fontSize: 13.5, color: C.fieldText },
+  dim: { color: C.fieldTextDim },
+  devHint: { marginTop: 14, textAlign: 'center', fontFamily: Fonts.medium, fontSize: 12, color: C.fieldTextDim },
+}));

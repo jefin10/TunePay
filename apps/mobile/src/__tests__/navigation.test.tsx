@@ -19,7 +19,7 @@ describe('root guards', () => {
   it('shows the biometric gate when logged in and locked', async () => {
     useSession.getState().saveSession({ phoneNumber: '+919876543210', userName: 'Ravi' });
     await renderRouter('./src/app');
-    expect(await screen.findByText('Unlock to continue to your wallet.')).toBeOnTheScreen();
+    expect(await screen.findByText('Pay smarter,\nspeak faster.')).toBeOnTheScreen();
   });
 
   it('opens the wallet once unlocked', async () => {

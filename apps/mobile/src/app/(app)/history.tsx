@@ -1,9 +1,22 @@
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, ScrollView, StyleSheet, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { TextInput } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
-import { AppText, Icon, IconButton, ScreenHeader, Tap, type IconName } from '@/core/components';
-import { Colors, Type } from '@/core/theme';
+import {
+  Empty,
+  Icon,
+  IconButton,
+  Kick,
+  List,
+  LiquidGlass,
+  PillChoice,
+  PillRail,
+  Screen,
+  Skeleton,
+  TopNav,
+} from '@/core/components';
+import { Fonts, makeStyles, Radius, useColors } from '@/core/theme';
+import { relativeDay } from '@/core/utils/format';
 import { TransactionCard } from '@/features/account/components/TransactionRow';
 import { useTransactions } from '@/features/account/hooks';
 import type { TransactionItem } from '@/models/transaction';
@@ -17,142 +30,100 @@ const matches = (tx: TransactionItem, filter: Filter) =>
   (filter === 'Received' && tx.type === 'received') ||
   (filter === 'Failed' && tx.status === 'failed');
 
+/** Newest first, a heading per day. */
+function byDay(list: TransactionItem[]) {
+  const groups: { title: string; items: TransactionItem[] }[] = [];
+  for (const tx of list) {
+    const title = relativeDay(tx.timestamp) || 'Earlier';
+    const last = groups[groups.length - 1];
+    if (last?.title === title) last.items.push(tx);
+    else groups.push({ title, items: [tx] });
+  }
+  return groups;
+}
+
 export default function HistoryScreen() {
+  const C = useColors();
+  const styles = useStyles();
   const [filter, setFilter] = useState<Filter>('All');
   const [searching, setSearching] = useState(false);
   const [query, setQuery] = useState('');
   const transactions = useTransactions();
 
-  const filtered = useMemo(() => {
+  const groups = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return (transactions.data ?? []).filter(
-      (tx) => matches(tx, filter) && (!q || tx.counterpartyName.toLowerCase().includes(q)),
+    return byDay(
+      (transactions.data ?? []).filter((tx) => matches(tx, filter) && (!q || tx.counterpartyName.toLowerCase().includes(q))),
     );
   }, [transactions.data, filter, query]);
 
   return (
-    <SafeAreaView style={styles.root}>
-      <View style={styles.header}>
-        <ScreenHeader
-          title="history"
-          right={
-            <IconButton
-              icon={searching ? 'close' : 'search'}
-              accessibilityLabel={searching ? 'Close search' : 'Search'}
-              onPress={() => {
-                setSearching((s) => !s);
-                setQuery('');
-              }}
-            />
-          }
-        />
-        {searching && (
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Search by name"
-            placeholderTextColor={Colors.textMuted}
-            autoFocus
-            style={[Type.body(15, 600), styles.search]}
+    <Screen onRefresh={() => transactions.refetch()} refreshing={transactions.isRefetching}>
+      <TopNav
+        large
+        title="History"
+        right={
+          <IconButton
+            icon={searching ? 'close' : 'search'}
+            accessibilityLabel={searching ? 'Close search' : 'Search'}
+            onPress={() => {
+              setSearching((s) => !s);
+              setQuery('');
+            }}
           />
-        )}
-      </View>
+        }
+      />
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters} style={styles.filterStrip}>
-        {FILTERS.map((f) => {
-          const selected = f === filter;
-          return (
-            <Tap
-              key={f}
-              scale={0.94}
-              onPress={() => setFilter(f)}
-              style={[styles.filter, selected && styles.filterSelected]}
-              accessibilityRole="tab"
-              accessibilityState={{ selected }}>
-              <AppText style={Type.body(13, 700, selected ? Colors.white : Colors.ink)}>{f}</AppText>
-            </Tap>
-          );
-        })}
-      </ScrollView>
+      {searching ? (
+        <Animated.View entering={FadeIn.duration(180)}>
+          <LiquidGlass radius={Radius.field} weight="strong" flat bevel={false} style={styles.search}>
+            <Icon name="search" size={18} color={C.muted} />
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Search by name"
+              placeholderTextColor={C.muted}
+              selectionColor={C.blue}
+              autoFocus
+              autoCorrect={false}
+              style={styles.searchInput}
+            />
+          </LiquidGlass>
+        </Animated.View>
+      ) : null}
+
+      <PillRail style={styles.filters}>
+        {FILTERS.map((f) => (
+          <PillChoice key={f} label={f} on={f === filter} role="tab" onPress={() => setFilter(f)} />
+        ))}
+      </PillRail>
 
       {transactions.isLoading ? (
-        <View style={styles.center}>
-          <ActivityIndicator color={Colors.ink} />
-        </View>
+        <Skeleton style={styles.skeleton} />
       ) : transactions.isError ? (
-        <EmptyState icon="error-outline" message="Failed to fetch transactions." />
+        <Empty icon="alert-circle-outline" title="Couldn't load your history" />
+      ) : groups.length === 0 ? (
+        <Empty icon="receipt-outline" title="Nothing here yet" />
       ) : (
-        <FlatList
-          data={filtered}
-          keyExtractor={(tx, i) => `${tx.timestamp}-${i}`}
-          renderItem={({ item }) => <TransactionCard tx={item} />}
-          ItemSeparatorComponent={() => <View style={styles.gap} />}
-          contentContainerStyle={[styles.list, filtered.length === 0 && styles.grow]}
-          ListEmptyComponent={
-            <EmptyState icon="receipt-long" message="Nothing here yet — your transactions will land here." />
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={transactions.isRefetching}
-              onRefresh={() => {
-                transactions.refetch();
-              }}
-              tintColor={Colors.ink}
-              colors={[Colors.ink]}
-            />
-          }
-        />
+        groups.map((g) => (
+          <Animated.View key={g.title} entering={FadeIn.duration(220)}>
+            <Kick style={styles.day}>{g.title}</Kick>
+            <List>
+              {g.items.map((tx, i) => (
+                <TransactionCard key={`${tx.timestamp}-${i}`} tx={tx} />
+              ))}
+            </List>
+          </Animated.View>
+        ))
       )}
-    </SafeAreaView>
+    </Screen>
   );
 }
 
-function EmptyState({ icon, message }: { icon: IconName; message: string }) {
-  return (
-    <View style={styles.center}>
-      <View style={styles.emptyIcon}>
-        <Icon name={icon} size={28} />
-      </View>
-      <AppText style={[Type.body(14, 500, Colors.textSecondary), styles.emptyText]}>{message}</AppText>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: Colors.surfaceLight },
-  header: { paddingHorizontal: 20, paddingTop: 8, gap: 14 },
-  search: {
-    backgroundColor: Colors.surface,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  filterStrip: { flexGrow: 0, marginVertical: 14 },
-  filters: { paddingHorizontal: 20, gap: 8 },
-  filter: {
-    paddingHorizontal: 18,
-    paddingVertical: 9,
-    borderRadius: 40,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    backgroundColor: Colors.surface,
-  },
-  filterSelected: { backgroundColor: Colors.ink, borderColor: Colors.ink },
-  list: { paddingHorizontal: 20, paddingTop: 4, paddingBottom: 24 },
-  grow: { flexGrow: 1 },
-  gap: { height: 10 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32 },
-  emptyIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: { marginTop: 18, textAlign: 'center', lineHeight: 21 },
-});
+const useStyles = makeStyles((C) => ({
+  search: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 54, paddingLeft: 16, paddingRight: 8, marginTop: 4 },
+  searchInput: { flex: 1, fontFamily: Fonts.regular, fontSize: 15, color: C.ink, paddingVertical: 12 },
+  filters: { marginTop: 16, marginBottom: 4 },
+  day: { marginTop: 22, marginBottom: 10 },
+  skeleton: { height: 260, borderRadius: Radius.panel, marginTop: 22 },
+}));

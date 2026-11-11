@@ -1,7 +1,7 @@
-import type { TextInputProps } from 'react-native';
+import { Text, type TextInputProps } from 'react-native';
 
-import { AppText, Field } from '@/core/components';
-import { Type } from '@/core/theme';
+import { Field } from '@/core/components';
+import { Fonts, makeStyles } from '@/core/theme';
 
 import { sanitizeAmountInput } from '../amount';
 
@@ -18,6 +18,7 @@ export function AmountField({
   label?: string;
   error?: string | null;
 }) {
+  const styles = useStyles();
   return (
     <Field
       label={label}
@@ -26,10 +27,15 @@ export function AmountField({
       placeholder="0"
       keyboardType="decimal-pad"
       error={error}
-      left={<AppText style={Type.body(16, 800)}>₹</AppText>}
-      style={Type.body(18, 700)}
+      left={<Text style={styles.rupee}>₹</Text>}
+      style={styles.input}
       accessibilityLabel={label}
       {...rest}
     />
   );
 }
+
+const useStyles = makeStyles((C) => ({
+  rupee: { fontFamily: Fonts.light, fontSize: 26, color: C.inkSoft },
+  input: { fontFamily: Fonts.light, fontSize: 26, letterSpacing: -0.6, minHeight: 60 },
+}));

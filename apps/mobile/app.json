@@ -6,7 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "tunepay",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.jefin10.tunepay",
       "supportsTablet": false
@@ -14,7 +14,7 @@
     "android": {
       "package": "com.jefin10.tunepay",
       "adaptiveIcon": {
-        "backgroundColor": "#F5F1E6",
+        "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "predictiveBackGestureEnabled": false
@@ -28,9 +28,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#F5F1E6",
+          "backgroundColor": "#EEF2F7",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 120
+          "imageWidth": 120,
+          "dark": {
+            "backgroundColor": "#0B0D11",
+            "image": "./assets/images/splash-icon.png"
+          }
         }
       ],
       [

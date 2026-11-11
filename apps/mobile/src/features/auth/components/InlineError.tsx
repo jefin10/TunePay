@@ -1,33 +1,33 @@
-import { StyleSheet, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { Text } from 'react-native';
+import Animated, { FadeInDown, FadeOut } from 'react-native-reanimated';
 
-import { AppText, Entrance, Icon } from '@/core/components';
-import { alpha, Colors, Type } from '@/core/theme';
+import { Fonts, makeStyles } from '@/core/theme';
 
-/** Coral error chip shown under auth inputs. Renders nothing when empty. */
+/** The one line above a floating action that says why it did not go through. */
 export function InlineError({ message }: { message: string | null }) {
+  const styles = useStyles();
   if (!message) return null;
   return (
-    <Entrance distance={8} style={styles.wrap}>
-      <View style={styles.chip} accessibilityRole="alert">
-        <Icon name="info-outline" size={18} color={Colors.coral} />
-        <AppText style={[Type.body(13, 600, Colors.coral), styles.text]}>{message}</AppText>
-      </View>
-    </Entrance>
+    <Animated.View key={message} entering={FadeInDown.duration(260)} exiting={FadeOut.duration(160)}>
+      <Text style={styles.text} accessibilityRole="alert">
+        {message}
+      </Text>
+    </Animated.View>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap: { marginTop: 14 },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: alpha(Colors.coral, 0.08),
-    borderWidth: 1,
-    borderColor: alpha(Colors.coral, 0.3),
+/** A tapped action that cannot go through yet: explain, and nudge the hand. */
+export function nudge(setError: (message: string) => void, message: string) {
+  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  setError(message);
+}
+
+const useStyles = makeStyles((C, scheme) => ({
+  text: {
+    color: scheme === 'dark' ? '#FF8A90' : C.danger,
+    fontFamily: Fonts.medium,
+    fontSize: 13,
+    textAlign: 'center',
   },
-  text: { flex: 1 },
-});
+}));
