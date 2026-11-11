@@ -41,7 +41,7 @@ it('signs up a new user: phone → OTP → name → biometric gate', async () =>
   await type(await screen.findByPlaceholderText('Your full name'), 'Ravi');
   await press(screen.getByText('Create account'));
 
-  expect(await screen.findByText('Unlock to continue to your wallet.')).toBeOnTheScreen();
+  expect(await screen.findByText('Pay smarter,\nspeak faster.')).toBeOnTheScreen();
   expect(useSession.getState()).toMatchObject({ isLoggedIn: true, phoneNumber: '+919876543210', upiId: 'ravi@upi' });
 });
 

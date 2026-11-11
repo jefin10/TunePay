@@ -14,6 +14,9 @@ const K = {
   upiId: 'upiId',
 } as const;
 
+/** Written by the theme provider; survives logout. */
+export const THEME_KEY = 'theme_preference';
+
 /** Boolean preferences (biometrics, notification toggles). */
 export type FlagKey =
   | 'biometricEnabled'
@@ -104,7 +107,10 @@ export const useSession = create<SessionState>()((set) => ({
   },
 
   clear() {
+    // The light/dark choice belongs to the device, not the account.
+    const theme = Storage.getItemSync(THEME_KEY);
     Storage.clearSync();
+    if (theme) Storage.setItemSync(THEME_KEY, theme);
     set({ ...readInitialState() });
   },
 }));

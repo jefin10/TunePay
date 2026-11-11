@@ -1,17 +1,20 @@
+import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, Text } from 'react-native';
 
 import { ApiException } from '@/core/api/client';
-import { AppButton, AppLogo, AppText, Icon, Sheet, Tap } from '@/core/components';
-import { Colors, Type } from '@/core/theme';
+import { AppButton, Field, Icon, List, Row, Sheet, Wordmark } from '@/core/components';
+import { Fonts, makeStyles, useColors } from '@/core/theme';
 import { sendOtp } from '@/features/auth/api';
 import { AuthLayout } from '@/features/auth/components/AuthLayout';
-import { InlineError } from '@/features/auth/components/InlineError';
+import { InlineError, nudge } from '@/features/auth/components/InlineError';
 
 const COUNTRY_CODES = ['+91', '+1', '+44', '+61', '+971'];
 
 export default function PhoneNumberScreen() {
+  const C = useColors();
+  const styles = useStyles();
   const [code, setCode] = useState('+91');
   const [phone, setPhone] = useState('');
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -19,8 +22,8 @@ export default function PhoneNumberScreen() {
   const [error, setError] = useState<string | null>(null);
 
   const submit = async () => {
-    if (!phone) return setError('Please enter phone number');
-    if (phone.length !== 10) return setError('Phone number must be 10 digits');
+    if (!phone) return nudge(setError, 'Please enter phone number');
+    if (phone.length !== 10) return nudge(setError, 'Phone number must be 10 digits');
 
     setError(null);
     setLoading(true);
@@ -37,102 +40,84 @@ export default function PhoneNumberScreen() {
 
   return (
     <AuthLayout
-      top={
-        <View style={styles.brand}>
-          <View style={styles.logoBox}>
-            <AppLogo type="icon" width={28} height={28} />
-          </View>
-          <AppText style={Type.heading(17)}>TunePay</AppText>
-        </View>
-      }
-      eyebrow="sign in"
+      step={1}
+      top={<Wordmark style={styles.brand} />}
       title={"What's your\nphone number?"}
-      subtitle="We will send a one-time code to verify it."
       footer={
-        <View style={styles.footer}>
-          <AppButton label="Send code" icon="arrow-forward" loading={loading} onPress={submit} />
-          <AppText style={[Type.body(12, 500, Colors.textMuted), styles.center]}>
-            By continuing you agree to our Terms & Privacy.
-          </AppText>
-        </View>
+        <>
+          <InlineError message={error} />
+          <AppButton label="Send code" loading={loading} onPress={submit} />
+          <Text style={styles.trust}>By continuing you agree to our Terms & Privacy.</Text>
+        </>
       }>
-      <View style={styles.phoneRow}>
-        <Tap onPress={() => setPickerOpen(true)} style={styles.codeButton} accessibilityLabel="Country code">
-          <AppText style={Type.body(16, 700)}>{code}</AppText>
-          <Icon name="keyboard-arrow-down" size={18} />
-        </Tap>
-        <View style={styles.divider} />
-        <TextInput
-          value={phone}
-          onChangeText={(t) => {
-            setPhone(t.replace(/\D/g, '').slice(0, 10));
-            setError(null);
-          }}
-          placeholder="Mobile number"
-          placeholderTextColor={Colors.textMuted}
-          keyboardType="phone-pad"
-          textContentType="telephoneNumber"
-          autoComplete="tel"
-          maxLength={10}
-          autoFocus
-          onSubmitEditing={submit}
-          style={[Type.body(17, 600), styles.input]}
-        />
-      </View>
-      <InlineError message={error} />
+      <Field
+        label="Mobile number"
+        value={phone}
+        onChangeText={(t) => {
+          setPhone(t.replace(/\D/g, '').slice(0, 10));
+          setError(null);
+        }}
+        placeholder="Mobile number"
+        keyboardType="phone-pad"
+        textContentType="telephoneNumber"
+        autoComplete="tel"
+        maxLength={10}
+        autoFocus
+        onSubmitEditing={submit}
+        style={styles.input}
+        left={
+          <Pressable
+            onPress={() => setPickerOpen(true)}
+            style={({ pressed }) => [styles.code, pressed && styles.pressed]}
+            accessibilityRole="button"
+            accessibilityLabel="Country code">
+            <Text style={styles.codeText}>{code}</Text>
+            <Icon name="chevron-down" size={14} color={C.inkSoft} />
+          </Pressable>
+        }
+      />
 
-      <Sheet visible={pickerOpen} onClose={() => setPickerOpen(false)}>
-        <AppText style={[Type.heading(18), styles.sheetTitle]}>Country code</AppText>
-        {COUNTRY_CODES.map((c) => (
-          <Tap
-            key={c}
-            onPress={() => {
-              setCode(c);
-              setPickerOpen(false);
-            }}
-            style={styles.codeRow}>
-            <AppText style={Type.body(16, 700)}>{c}</AppText>
-            {c === code && <Icon name="check" color={Colors.primary} />}
-          </Tap>
-        ))}
+      <Sheet visible={pickerOpen} onClose={() => setPickerOpen(false)} title="Country code">
+        <List>
+          {COUNTRY_CODES.map((c) => (
+            <Row
+              key={c}
+              title={c}
+              onPress={() => {
+                Haptics.selectionAsync();
+                setCode(c);
+                setPickerOpen(false);
+              }}
+              right={c === code ? <Icon name="checkmark" size={18} /> : undefined}
+            />
+          ))}
+        </List>
       </Sheet>
     </AuthLayout>
   );
 }
 
-const styles = StyleSheet.create({
-  brand: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 28 },
-  logoBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  phoneRow: {
+const useStyles = makeStyles((C) => ({
+  brand: { marginBottom: 28 },
+  code: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surface,
-    borderRadius: 16,
-    borderWidth: 1.5,
-    borderColor: Colors.borderStrong,
-    paddingHorizontal: 12,
+    gap: 3,
+    paddingVertical: 14,
+    paddingRight: 12,
+    borderRightWidth: 1,
+    borderRightColor: C.soft2,
   },
-  codeButton: { flexDirection: 'row', alignItems: 'center', gap: 2, paddingVertical: 18 },
-  divider: { width: 1.5, height: 28, backgroundColor: Colors.border, marginHorizontal: 10 },
-  input: { flex: 1, paddingVertical: 18, letterSpacing: 0.5 },
-  footer: { gap: 12 },
-  center: { textAlign: 'center' },
-  sheetTitle: { marginBottom: 8 },
-  codeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.divider,
+  codeText: { fontFamily: Fonts.semibold, fontSize: 15, color: C.ink },
+  input: { letterSpacing: 0.4 },
+  pressed: { opacity: 0.6 },
+  trust: {
+    textAlign: 'center',
+    fontSize: 11.5,
+    lineHeight: 16,
+    color: C.fieldTextDim,
+    maxWidth: 280,
+    alignSelf: 'center',
+    fontFamily: Fonts.regular,
   },
-});
+}));

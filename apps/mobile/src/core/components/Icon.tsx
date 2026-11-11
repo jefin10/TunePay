@@ -1,10 +1,11 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 
-import { Colors } from '@/core/theme';
+import { useColors } from '@/core/theme';
 
-export type IconName = ComponentProps<typeof MaterialIcons>['name'];
+export type IconName = ComponentProps<typeof Ionicons>['name'];
 
-export function Icon({ name, size = 20, color = Colors.ink }: { name: IconName; size?: number; color?: string }) {
-  return <MaterialIcons name={name} size={size} color={color} />;
+export function Icon({ name, size = 20, color }: { name: IconName; size?: number; color?: string }) {
+  const C = useColors();
+  return <Ionicons name={name} size={size} color={color ?? C.ink} />;
 }

@@ -1,91 +1,75 @@
 import { useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { AppText, Card, Chip, Entrance, ErrorCard, Icon, IconButton, Screen, ScreenHeader } from '@/core/components';
+import { Badge, Commit, IconButton, InfoRow, List, Notice, Row, RowIcon, Screen, Section, Skeleton, Stagger, TopNav } from '@/core/components';
 import { useSession } from '@/core/storage/session';
-import { alpha, Colors, Type } from '@/core/theme';
+import { Fonts, makeStyles } from '@/core/theme';
 import { formatINR } from '@/core/utils/format';
 import { useBalance } from '@/features/account/hooks';
 
 export default function BalanceScreen() {
+  const styles = useStyles();
   const [visible, setVisible] = useState(true);
   const balance = useBalance();
-  const userName = useSession((s) => s.userName) ?? 'User';
+  const userName = useSession((s) => s.userName) ?? 'there';
   const refresh = () => balance.refetch();
+  const shown = (v: number) => (visible ? formatINR(v) : '₹ ••••••');
 
   return (
     <Screen onRefresh={refresh} refreshing={balance.isRefetching}>
-      <Entrance>
-        <ScreenHeader
-          title="balance"
-          right={
-            <>
-              <IconButton
-                icon={visible ? 'visibility' : 'visibility-off'}
-                accessibilityLabel={visible ? 'Hide balance' : 'Show balance'}
-                onPress={() => setVisible((v) => !v)}
-              />
-              <IconButton icon="refresh" accessibilityLabel="Refresh" onPress={refresh} />
-            </>
-          }
-        />
+      <TopNav
+        title="Balance"
+        right={
+          <>
+            <IconButton
+              icon={visible ? 'eye-outline' : 'eye-off-outline'}
+              accessibilityLabel={visible ? 'Hide balance' : 'Show balance'}
+              onPress={() => setVisible((v) => !v)}
+            />
+            <IconButton icon="refresh" accessibilityLabel="Refresh" onPress={refresh} />
+          </>
+        }
+      />
 
-        <Card dark style={styles.hero}>
-          <AppText style={Type.eyebrow(alpha(Colors.white, 0.55))}>hi, {userName.toLowerCase()}</AppText>
-          <AppText style={[Type.body(14, 500, alpha(Colors.white, 0.7)), styles.label]}>available balance</AppText>
-          <View style={styles.amountRow}>
+      <Stagger>
+        <Commit kicker={`Hi, ${userName}`} title="Available balance" style={styles.hero}>
+          <View style={styles.amountLine}>
             {balance.isLoading ? (
-              <ActivityIndicator color={Colors.white} />
+              <Skeleton style={styles.amountSkeleton} />
             ) : (
-              <AppText style={Type.amount(48, Colors.white)}>
-                {visible ? formatINR(balance.data ?? 0) : '₹ ••••••'}
-              </AppText>
+              <Text style={styles.amount}>{shown(balance.data ?? 0)}</Text>
             )}
           </View>
-          <Chip label="instant" icon="bolt" />
-        </Card>
+        </Commit>
 
         {balance.isError ? (
-          <ErrorCard message="Failed to fetch balance. Pull to retry." onRetry={refresh} />
+          <Notice tone="err" onRetry={refresh} style={styles.gap}>
+            Failed to fetch balance. Pull to retry.
+          </Notice>
         ) : balance.data != null ? (
-          <Card>
-            <View style={styles.bankRow}>
-              <View style={styles.bankIcon}>
-                <Icon name="account-balance" />
-              </View>
-              <View style={styles.flex}>
-                <AppText style={Type.heading(16)}>Bank account</AppText>
-                <AppText style={[Type.body(12, 500, Colors.textSecondary), styles.sub]}>Linked & active</AppText>
-              </View>
-              <Chip label="active" background={alpha(Colors.mint, 0.12)} color={Colors.mint} />
-            </View>
-            <View style={styles.divider} />
-            <View style={styles.totalRow}>
-              <AppText style={Type.body(13, 500, Colors.textSecondary)}>Current balance</AppText>
-              <AppText style={Type.amount(18)}>{visible ? formatINR(balance.data) : '₹••••••'}</AppText>
-            </View>
-          </Card>
+          <Section title="Linked account">
+            <List>
+              <Row left={<RowIcon name="business-outline" />} title="Bank account" right={<Badge label="Active" variant="ink" />} />
+              <InfoRow label="Current balance" value={shown(balance.data)} />
+            </List>
+          </Section>
         ) : null}
-      </Entrance>
+      </Stagger>
     </Screen>
   );
 }
 
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  hero: { marginTop: 28, marginBottom: 22, paddingHorizontal: 24, paddingVertical: 26 },
-  label: { marginTop: 6 },
-  amountRow: { minHeight: 56, justifyContent: 'center', marginTop: 20, marginBottom: 24 },
-  bankRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
-  bankIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: Colors.surfaceDim,
-    alignItems: 'center',
-    justifyContent: 'center',
+const useStyles = makeStyles((C) => ({
+  hero: { marginTop: 8, paddingVertical: 24 },
+  amountLine: { minHeight: 60, justifyContent: 'center' },
+  amount: {
+    fontFamily: Fonts.light,
+    fontSize: 48,
+    lineHeight: 56,
+    letterSpacing: -1.6,
+    color: C.commitInk,
+    fontVariant: ['tabular-nums'],
   },
-  sub: { marginTop: 2 },
-  divider: { height: 1, backgroundColor: Colors.divider, marginVertical: 16 },
-  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-});
+  amountSkeleton: { width: 200, height: 44, backgroundColor: 'rgba(255,255,255,0.12)' },
+  gap: { marginTop: 18 },
+}));

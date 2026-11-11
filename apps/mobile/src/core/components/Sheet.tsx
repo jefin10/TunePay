@@ -1,61 +1,97 @@
 import type { ReactNode } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, View } from 'react-native';
-import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Animated, { Easing, FadeIn, SlideInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors, Motion } from '@/core/theme';
+import { makeStyles, Radius } from '@/core/theme';
 
-/** Bottom sheet: dimmed backdrop (tap to dismiss), cream panel, drag handle. */
+import { useText } from './AppText';
+import { KeyboardLift } from './KeyboardLift';
+import { sheetSurface } from './Screen';
+
+/** A drawer pulled up: no bounce at the end of the travel. */
+const DRAWER = Easing.bezier(0.23, 1, 0.32, 1);
+
+/** A bottom sheet over a dimmed ground: tap the scrim to dismiss. */
 export function Sheet({
   visible,
   onClose,
+  title,
   children,
   dismissable = true,
 }: {
   visible: boolean;
   onClose: () => void;
+  title?: string;
   children: ReactNode;
   /** Whether tapping the backdrop / back button closes it. */
   dismissable?: boolean;
 }) {
+  const styles = useStyles();
+  const t = useText();
   const insets = useSafeAreaInsets();
   return (
-    <Modal visible={visible} transparent animationType="none" statusBarTranslucent onRequestClose={dismissable ? onClose : () => {}}>
-      <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <Animated.View entering={FadeIn.duration(Motion.fast)} style={StyleSheet.absoluteFill}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      statusBarTranslucent
+      navigationBarTranslucent
+      onRequestClose={dismissable ? onClose : () => {}}>
+      <KeyboardLift style={styles.fill}>
+        <Animated.View entering={FadeIn.duration(200)} style={StyleSheet.absoluteFill}>
           <Pressable
-            style={styles.backdrop}
+            style={[StyleSheet.absoluteFill, styles.dim]}
             onPress={dismissable ? onClose : undefined}
             accessibilityLabel="Close"
           />
         </Animated.View>
-        <Animated.View
-          entering={SlideInDown.duration(Motion.medium).easing(Motion.out)}
-          style={[styles.panel, { paddingBottom: Math.max(insets.bottom, 16) + 8 }]}>
-          <View style={styles.handle} />
-          {children}
-        </Animated.View>
-      </KeyboardAvoidingView>
+        <View style={styles.host} pointerEvents="box-none">
+          <Animated.View
+            entering={SlideInDown.duration(320).easing(DRAWER)}
+            style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) + 14 }]}
+            accessibilityViewIsModal>
+            <View style={styles.handle} />
+            <ScrollView
+              bounces={false}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.scroll}>
+              {title ? (
+                <Text style={[t.t3, styles.title]} accessibilityRole="header">
+                  {title}
+                </Text>
+              ) : null}
+              {children}
+            </ScrollView>
+          </Animated.View>
+        </View>
+      </KeyboardLift>
     </Modal>
   );
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1, justifyContent: 'flex-end' },
-  backdrop: { flex: 1, backgroundColor: 'rgba(20,18,43,0.5)' },
-  panel: {
-    backgroundColor: Colors.surfaceLight,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    paddingHorizontal: 24,
-    paddingTop: 12,
+const useStyles = makeStyles((C, scheme) => ({
+  fill: { flex: 1 },
+  dim: { backgroundColor: scheme === 'dark' ? 'rgba(0,0,0,0.66)' : 'rgba(10,10,11,0.52)' },
+  host: { flex: 1, justifyContent: 'flex-end' },
+  sheet: {
+    maxHeight: '92%',
+    borderTopLeftRadius: Radius.sheet,
+    borderTopRightRadius: Radius.sheet,
+    borderCurve: 'continuous',
+    paddingTop: 10,
+    paddingHorizontal: 20,
+    ...sheetSurface(scheme),
   },
   handle: {
+    width: 38,
+    height: 5,
+    borderRadius: Radius.full,
+    backgroundColor: C.soft2,
     alignSelf: 'center',
-    width: 40,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.borderStrong,
-    marginBottom: 20,
+    marginBottom: 16,
   },
-});
+  scroll: { paddingBottom: 4 },
+  title: { marginBottom: 14 },
+}));

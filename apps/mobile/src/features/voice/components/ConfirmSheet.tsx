@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { AppButton, AppText, Avatar, ErrorCard, Sheet, Tap } from '@/core/components';
-import { Colors, Type } from '@/core/theme';
+import { AppButton, Avatar, List, Notice, Row, Sheet, useText } from '@/core/components';
+import { Fonts, makeStyles } from '@/core/theme';
 import { parseAmount } from '@/features/payments/amount';
 import { AmountField } from '@/features/payments/components/AmountField';
 import type { DeviceContact } from '@/features/payments/contacts';
@@ -31,6 +31,8 @@ export function ConfirmSheet({
   onCancel: () => void;
   onConfirm: (amount: number, target: Target) => void;
 }) {
+  const styles = useStyles();
+  const t = useText();
   const [target, setTarget] = useState<Target | undefined>(initialTarget);
   const [amount, setAmount] = useState(initialAmount ? String(initialAmount) : '');
   const [error, setError] = useState<string | null>(null);
@@ -41,60 +43,57 @@ export function ConfirmSheet({
     if (target) onConfirm(value, target);
   };
 
+  if (!target && choices) {
+    return (
+      <Sheet visible onClose={onCancel} dismissable={!busy} title={`Which ${choices.name}?`}>
+        <View style={styles.body}>
+          <List>
+            {choices.matches.map((c) => (
+              <Row
+                key={c.id}
+                left={<Avatar name={c.name} size={40} />}
+                title={c.name}
+                subtitle={c.phone}
+                chevron
+                onPress={() => setTarget(targetFromContact(c))}
+              />
+            ))}
+          </List>
+          <AppButton label="Cancel" variant="secondary" onPress={onCancel} />
+        </View>
+      </Sheet>
+    );
+  }
+
+  if (!target) return null;
+
   return (
     <Sheet visible onClose={onCancel} dismissable={!busy}>
-      {!target && choices ? (
-        <View style={styles.body}>
-          <AppText style={Type.eyebrow()}>which {choices.name}?</AppText>
-          <AppText style={Type.heading(22)}>Pick a contact</AppText>
-          {choices.matches.map((c) => (
-            <Tap key={c.id} onPress={() => setTarget(targetFromContact(c))} style={styles.contact} accessibilityRole="button">
-              <Avatar name={c.name} size={40} />
-              <View style={styles.flex}>
-                <AppText style={Type.body(15, 700)}>{c.name}</AppText>
-                <AppText style={Type.body(12, 500, Colors.textSecondary)}>{c.phone}</AppText>
-              </View>
-            </Tap>
-          ))}
-          <AppButton label="Cancel" outline onPress={onCancel} />
-        </View>
-      ) : target ? (
-        <View style={styles.body}>
-          <AppText style={[Type.eyebrow(), styles.center]}>{mode === 'transfer' ? 'voice pay' : 'request money'}</AppText>
-          <AppText style={[Type.body(15, 600, Colors.textSecondary), styles.center]}>
-            {mode === 'transfer' ? 'to' : 'from'} <AppText style={Type.body(15, 800)}>{target.label}</AppText>
+      <View style={styles.body}>
+        <View style={styles.who}>
+          <Avatar name={target.label} size={56} dark />
+          <Text style={t.kick}>{mode === 'transfer' ? 'Voice pay' : 'Request money'}</Text>
+          <Text style={styles.to}>
+            {mode === 'transfer' ? 'to' : 'from'} <Text style={styles.strong}>{target.label}</Text>
             {target.kind === 'phone' && target.label !== target.phone ? ` · ${target.phone}` : ''}
-          </AppText>
-          <AmountField value={amount} onChangeText={setAmount} autoFocus={!initialAmount} />
-          {error && <ErrorCard message={error} />}
-          <View style={styles.actions}>
-            <AppButton label="Cancel" outline onPress={onCancel} disabled={busy} style={styles.flex} />
-            <AppButton
-              label={mode === 'transfer' ? 'Confirm' : 'Send request'}
-              onPress={confirm}
-              loading={busy}
-              style={styles.flex}
-            />
-          </View>
+          </Text>
         </View>
-      ) : null}
+        <AmountField value={amount} onChangeText={setAmount} autoFocus={!initialAmount} />
+        {error ? <Notice tone="err">{error}</Notice> : null}
+        <View style={styles.actions}>
+          <AppButton label="Cancel" variant="secondary" onPress={onCancel} disabled={busy} style={styles.grow} />
+          <AppButton label={mode === 'transfer' ? 'Confirm' : 'Send request'} onPress={confirm} loading={busy} style={styles.grow} />
+        </View>
+      </View>
     </Sheet>
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((C) => ({
   body: { gap: 16 },
-  flex: { flex: 1 },
-  center: { textAlign: 'center' },
-  contact: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    padding: 12,
-    borderRadius: 16,
-    backgroundColor: Colors.surface,
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
+  grow: { flex: 1 },
+  who: { alignItems: 'center', gap: 8, marginBottom: 4 },
+  to: { fontFamily: Fonts.regular, fontSize: 15, color: C.inkSoft, textAlign: 'center' },
+  strong: { fontFamily: Fonts.semibold, color: C.ink },
   actions: { flexDirection: 'row', gap: 10 },
-});
+}));

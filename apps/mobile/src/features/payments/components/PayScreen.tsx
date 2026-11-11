@@ -1,10 +1,10 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
-import { AppButton, AppText, Entrance, ErrorCard, Field, Screen, ScreenHeader } from '@/core/components';
+import { ActionBar, AppButton, Entrance, Field, Notice, Screen, TopNav } from '@/core/components';
 import { useSession } from '@/core/storage/session';
-import { Type } from '@/core/theme';
+import { makeStyles } from '@/core/theme';
 import { formatINR } from '@/core/utils/format';
 import { isUpiId, localPhone, toIndianE164 } from '@/core/utils/phone';
 import { useRefreshAccount } from '@/features/account/hooks';
@@ -18,20 +18,16 @@ import { SuccessDialog } from './SuccessDialog';
 
 const COPY = {
   phone: {
-    header: 'pay to phone',
-    eyebrow: 'to a number',
-    title: 'Pay any\nphone number.',
+    title: 'Pay a phone number',
     placeholder: 'Phone number',
-    icon: 'smartphone',
+    icon: 'phone-portrait-outline',
     empty: 'Please enter a phone number.',
     invalid: 'Enter a 10-digit phone number.',
   },
   upi: {
-    header: 'pay to upi id',
-    eyebrow: 'to a upi id',
-    title: 'Pay any\nUPI handle.',
+    title: 'Pay a UPI ID',
     placeholder: 'name@upi',
-    icon: 'alternate-email',
+    icon: 'at-outline',
     empty: 'Please enter a UPI ID.',
     invalid: 'That does not look like a UPI ID (name@bank).',
   },
@@ -52,6 +48,7 @@ export function PayScreen({
   initialAmount?: string;
   initialName?: string;
 }) {
+  const styles = useStyles();
   const copy = COPY[mode];
   const senderPhone = useSession((s) => s.phoneNumber) ?? '';
   const refreshAccount = useRefreshAccount();
@@ -121,14 +118,18 @@ export function PayScreen({
   };
 
   return (
-    <Screen>
-      <Entrance>
-        <ScreenHeader title={copy.header} />
-        <View style={styles.heading}>
-          <AppText style={Type.eyebrow()}>{copy.eyebrow}</AppText>
-          <AppText style={[Type.heading(30, 800), styles.title]}>{copy.title}</AppText>
-        </View>
+    <Screen
+      footer={
+        recipient ? (
+          <ActionBar>
+            {payError ? <Notice tone="err">{payError}</Notice> : null}
+            <AppButton label="Pay now" loading={paying} onPress={pay} />
+          </ActionBar>
+        ) : null
+      }>
+      <TopNav large title={copy.title} />
 
+      <Entrance delay={80} style={styles.search}>
         <SearchBox
           icon={copy.icon}
           loading={searching}
@@ -143,25 +144,25 @@ export function PayScreen({
           autoCapitalize="none"
           accessibilityLabel={copy.placeholder}
         />
-        {searchError && (
-          <View style={styles.gapSm}>
-            <ErrorCard message={searchError} />
-          </View>
-        )}
+      </Entrance>
+      {searchError ? (
+        <Entrance distance={8} style={styles.gapSm}>
+          <Notice tone="err">{searchError}</Notice>
+        </Entrance>
+      ) : null}
 
-        {recipient && (
-          <Entrance distance={10} style={styles.form}>
+      {recipient ? (
+        <Entrance distance={10}>
+          <View style={styles.form}>
             <RecipientCard
               name={recipient.upiName}
               subtitle={mode === 'phone' ? recipient.upiId : recipient.phoneNumber || recipient.upiId}
             />
             <AmountField value={amount} onChangeText={setAmount} autoFocus={!initialAmount} />
             <Field label="Note (optional)" value={note} onChangeText={setNote} placeholder="Add a note" maxLength={60} />
-            <AppButton label="Pay now" loading={paying} onPress={pay} />
-            {payError && <ErrorCard message={payError} />}
-          </Entrance>
-        )}
-      </Entrance>
+          </View>
+        </Entrance>
+      ) : null}
 
       <SuccessDialog
         visible={paid != null}
@@ -176,9 +177,8 @@ export function PayScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  heading: { marginTop: 22, marginBottom: 22, gap: 6 },
-  title: { lineHeight: 34 },
-  gapSm: { marginTop: 14 },
+const useStyles = makeStyles(() => ({
+  search: { marginTop: 14 },
+  gapSm: { marginTop: 12 },
   form: { marginTop: 22, gap: 18 },
-});
+}));
