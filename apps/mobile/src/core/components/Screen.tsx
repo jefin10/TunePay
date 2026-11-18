@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
@@ -12,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { makeStyles, Radius, useColors, useScheme } from '@/core/theme';
+import { makeStyles, Radius, useColors } from '@/core/theme';
 
 import { useText } from './AppText';
 import { IconButton } from './Kit';
@@ -26,9 +25,9 @@ const SCRIM_RAMP = 28;
 
 /**
  * A scrolling app screen over the shared ground. Content runs under the
- * status bar; a scrim fades in behind the bar only once content is beneath
- * it. `docked` leaves room for the floating dock. Pass `onRefresh` for
- * pull-to-refresh.
+ * status bar; a solid ink strip fades in behind the bar only once content
+ * is beneath it, the way Folio keeps the clock off the page. `docked`
+ * leaves room for the floating dock. Pass `onRefresh` for pull-to-refresh.
  */
 export function Screen({
   children,
@@ -49,7 +48,6 @@ export function Screen({
   scroll?: boolean;
 }) {
   const C = useColors();
-  const scheme = useScheme();
   const styles = useStyles();
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
@@ -57,7 +55,7 @@ export function Screen({
     scrollY.set(e.contentOffset.y);
   });
   const scrim = useAnimatedStyle(() => ({
-    opacity: interpolate(scrollY.get(), [0, SCRIM_RAMP], [0, 1], Extrapolation.CLAMP),
+    opacity: interpolate(scrollY.get(), [0, SCRIM_RAMP], [0, 0.96], Extrapolation.CLAMP),
   }));
 
   const body = scroll ? (
@@ -78,9 +76,9 @@ export function Screen({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={C.ink}
-            colors={[C.ink]}
-            progressBackgroundColor={C.white}
+            tintColor={C.blue}
+            colors={[C.blue]}
+            progressBackgroundColor={C.surface2}
             progressViewOffset={insets.top}
           />
         ) : undefined
@@ -95,25 +93,19 @@ export function Screen({
 
   return (
     <View style={styles.fill}>
-      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style="light" />
       <KeyboardLift style={styles.fill}>
         {body}
         {footer}
       </KeyboardLift>
-      <Animated.View pointerEvents="none" style={[styles.scrim, { height: insets.top + 6 }, scrim]}>
-        <LinearGradient
-          colors={[`${C.ground}E6`, `${C.ground}99`, `${C.ground}00`]}
-          locations={[0, 0.72, 1]}
-          style={StyleSheet.absoluteFill}
-        />
-      </Animated.View>
+      <Animated.View pointerEvents="none" style={[styles.scrim, { height: insets.top + 6, backgroundColor: C.ground }, scrim]} />
     </View>
   );
 }
 
 /**
  * The header row: back / centred label / actions. `large` sets the title in
- * the light display size under the row instead, for a screen's own heading.
+ * the display size under the row instead, for a screen's own heading.
  */
 export function TopNav({
   title,
@@ -160,25 +152,22 @@ export function TopNav({
   );
 }
 
-/** A static bottom bar for primary actions on non-docked screens. */
+/** A static bottom bar for primary actions on non-docked screens: an ink
+ * plate with a hairline top edge, the way Folio raises a sheet. */
 export function ActionBar({ children }: { children: ReactNode }) {
   const styles = useStyles();
   const insets = useSafeAreaInsets();
   return <View style={[styles.actionBar, { paddingBottom: Math.max(insets.bottom, 12) + 6 }]}>{children}</View>;
 }
 
-/** Sheets and the action bar carry content over a busy ground. In light they
- * are thick glass, near-opaque with a lit top edge; in dark they are solid,
- * the way iOS raises a sheet, with only a quiet top edge. */
-export const sheetSurface = (scheme: 'light' | 'dark') => ({
-  backgroundColor: scheme === 'dark' ? '#15191F' : 'rgba(250,251,253,0.985)',
-  boxShadow:
-    scheme === 'dark'
-      ? 'inset 0 1px 0 rgba(255,255,255,0.06), 0 -24px 60px -30px #000000'
-      : 'inset 0 1px 0 rgba(255,255,255,0.95), 0 -24px 60px -34px #0A0A0B8C',
+/** Sheets and the action bar: an ink-1 plate with a hairline top edge. */
+export const sheetSurface = () => ({
+  backgroundColor: '#111111',
+  borderTopWidth: StyleSheet.hairlineWidth,
+  borderTopColor: 'rgba(255,255,255,0.08)',
 });
 
-const useStyles = makeStyles((_C, scheme) => ({
+const useStyles = makeStyles((_C) => ({
   fill: { flex: 1 },
   grow: { flex: 1, minWidth: 0 },
   center: { alignItems: 'center' },
@@ -187,15 +176,14 @@ const useStyles = makeStyles((_C, scheme) => ({
   nav: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 42 },
   right: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   spacer: { width: 42 },
-  large: { marginTop: 18, gap: 4 },
+  large: { marginTop: 14, gap: 4 },
   scrim: { position: 'absolute', top: 0, left: 0, right: 0 },
   actionBar: {
     paddingTop: 12,
     paddingHorizontal: 20,
     borderTopLeftRadius: Radius.sheet,
     borderTopRightRadius: Radius.sheet,
-    borderCurve: 'continuous',
     gap: 10,
-    ...sheetSurface(scheme),
+    ...sheetSurface(),
   },
 }));
