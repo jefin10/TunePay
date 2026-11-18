@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, View, type PressableProps, type StyleProp, type ViewProps, type ViewStyle } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import type { ComponentRef, ReactNode, RefObject } from 'react';
-import { createContext, useContext } from 'react';
+import { createContext } from 'react';
 
 import { Motion, Radius, useColors, type Palette } from '@/core/theme';
 

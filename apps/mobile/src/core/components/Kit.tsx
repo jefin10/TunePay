@@ -29,7 +29,7 @@ import { Fonts, makeStyles, Radius, useColors, type Palette } from '@/core/theme
 import { initials } from '@/core/utils/format';
 
 import { Cap, Kick, T3, T4, useText } from './AppText';
-import { GLASS_TINT, GlassPressable, LiquidGlass } from './Glass';
+import { GlassPressable, LiquidGlass } from './Glass';
 import { Icon, type IconName } from './Icon';
 
 /* ------------------------------------------------------------ surfaces */

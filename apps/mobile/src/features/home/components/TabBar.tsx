@@ -15,7 +15,7 @@ import Animated, { cubicBezier } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BlurTargetContext, LiquidGlass } from '@/core/components';
-import { Fonts, makeStyles, Radius, useColors, useScheme } from '@/core/theme';
+import { Fonts, makeStyles, Radius, useColors } from '@/core/theme';
 import { useReduceMotion } from '@/core/use-reduce-motion';
 
 import { DockIcon, type DockIconName } from './DockIcon';
