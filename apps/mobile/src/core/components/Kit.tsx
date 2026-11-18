@@ -1,10 +1,7 @@
 /**
- * The surfaces of the design system as React Native primitives.
- *
- * Every surface is liquid glass over the ground — cards, lists, rows, chips,
- * notices, secondary buttons — in the light or dark edition of the current
- * scheme. Only primary actions (and the one dark Commit panel per screen)
- * stay solid.
+ * The surfaces of the design system as React Native primitives — Folio's
+ * flat world: plates of ink one step above the page with hairline rims,
+ * chalk type, mint for the accent, coral for danger. No glass, no shadows.
  */
 import * as Haptics from 'expo-haptics';
 import { useEffect, type ReactNode } from 'react';
@@ -28,7 +25,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { useReduceMotion } from '@/core/use-reduce-motion';
-import { Fonts, makeStyles, Radius, useColors, useScheme, type Palette } from '@/core/theme';
+import { Fonts, makeStyles, Radius, useColors, type Palette } from '@/core/theme';
 import { initials } from '@/core/utils/format';
 
 import { Cap, Kick, T3, T4, useText } from './AppText';
@@ -37,17 +34,17 @@ import { Icon, type IconName } from './Icon';
 
 /* ------------------------------------------------------------ surfaces */
 
-/** A glass card. */
+/** A plate — Folio's card: ink-1, hairline rim, radius 22. */
 export function Card({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const s = useKit();
   return (
-    <LiquidGlass radius={Radius.card} weight="strong" reach={0.18} style={[s.card, style]}>
+    <LiquidGlass radius={Radius.card} weight="strong" style={[s.card, style]}>
       {children}
     </LiquidGlass>
   );
 }
 
-/** A pressable glass surface row. */
+/** A pressable plate row. */
 export function Surface({
   children,
   style,
@@ -62,7 +59,7 @@ export function Surface({
   const s = useKit();
   if (!onPress) {
     return (
-      <LiquidGlass radius={Radius.tile} weight="strong" bevel={false} style={[s.sur, style]}>
+      <LiquidGlass radius={Radius.tile} weight="strong" style={[s.sur, style]}>
         {children}
       </LiquidGlass>
     );
@@ -71,7 +68,6 @@ export function Surface({
     <GlassPressable
       radius={Radius.tile}
       weight="strong"
-      bevel={false}
       haptic={false}
       onPress={onPress}
       accessibilityLabel={accessibilityLabel}
@@ -81,12 +77,12 @@ export function Surface({
   );
 }
 
-/** A grouped list of rows on one pane of glass, with inset hairlines. */
+/** A grouped list of rows on one plate, with inset hairlines. */
 export function List({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const s = useKit();
   const items = (Array.isArray(children) ? children : [children]).flat().filter(Boolean);
   return (
-    <LiquidGlass radius={Radius.panel} weight="strong" bevel={false} reach={0.16} style={style}>
+    <LiquidGlass radius={Radius.panel} weight="strong" style={style}>
       {/* Clip pressed rows to the panel's corners. */}
       <View style={s.lstClip}>
         {items.map((child, i) => (
@@ -145,12 +141,12 @@ export function Row({
   );
 }
 
-/** A row's leading icon: a quiet round tile. */
+/** A row's leading icon: a quiet tile, the way Folio insets row icons. */
 export function RowIcon({ name }: { name: IconName }) {
   const s = useKit();
   return (
     <View style={s.rowIcon}>
-      <Icon name={name} size={19} />
+      <Icon name={name} size={19} color="#c9c8c2" />
     </View>
   );
 }
@@ -191,7 +187,7 @@ export function ToggleRow({
   );
 }
 
-/** The one dark panel per screen. */
+/** The one raised panel per screen. */
 export function Commit({
   kicker,
   title,
@@ -233,7 +229,7 @@ export function CommitButton({ label, icon, onPress }: { label: string; icon?: I
   );
 }
 
-/** A small pill button: glass by default, solid ink when primary, red-tinted when destructive. */
+/** A small pill button: ink tile by default, chalk face when primary, coral-tinted when destructive. */
 export function SmallButton({
   label,
   icon,
@@ -251,20 +247,13 @@ export function SmallButton({
 }) {
   const s = useKit();
   const C = useColors();
-  const fg = variant === 'p' ? C.white : variant === 'd' ? C.danger : C.ink;
+  const fg = variant === 'p' ? '#0b0b0b' : variant === 'd' ? C.danger : C.inkSoft;
   const content = (
     <>
       {icon ? <Icon name={icon} size={16} color={fg} /> : null}
       <Text style={[s.smBtnText, { color: fg }]}>{label}</Text>
     </>
   );
-  if (variant === 's') {
-    return (
-      <GlassPressable bevel={false} haptic={false} onPress={onPress} disabled={disabled} style={[s.smBtn, style]}>
-        {content}
-      </GlassPressable>
-    );
-  }
   return (
     <Pressable
       onPress={onPress}
@@ -284,7 +273,7 @@ export function SmallButton({
 
 /* ------------------------------------------------------------ avatars */
 
-/** Tonal grey per person — stable, never a brand colour. */
+/** A step of ink per person — stable, never a brand colour. */
 function tintFor(name: string, C: Palette) {
   const tints = [C.g1, C.g2, C.g3, C.g4];
   let h = 0;
@@ -292,7 +281,7 @@ function tintFor(name: string, C: Palette) {
   return tints[Math.abs(h) % tints.length]!;
 }
 
-/** A round initials avatar; `dark` makes it the ink one. */
+/** A round initials avatar; `dark` makes it the chalk one. */
 export function Avatar({ name, size = 40, dark }: { name: string | null | undefined; size?: number; dark?: boolean }) {
   const s = useKit();
   const C = useColors();
@@ -300,39 +289,39 @@ export function Avatar({ name, size = 40, dark }: { name: string | null | undefi
     <View
       style={[
         s.av,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: dark ? C.ink : tintFor(name ?? '', C) },
+        { width: size, height: size, borderRadius: size / 2, backgroundColor: dark ? '#f4f3ee' : tintFor(name ?? '', C) },
       ]}>
-      <Text style={[s.avText, { fontSize: size * 0.36 }, dark && { color: C.white }]}>{initials(name ?? '')}</Text>
+      <Text style={[s.avText, { fontSize: size * 0.36 }, dark && { color: '#0b0b0b' }]}>{initials(name ?? '')}</Text>
     </View>
   );
 }
 
 /* ------------------------------------------------------- small pieces */
 
-/** A small status pill; the fill carries the state, not the colour. */
+/** A small status pill: Folio's badge — a tonal fill and its colour. */
 export function Badge({ label, variant = 'soft' }: { label: string; variant?: 'soft' | 'ink' | 'line' | 'danger' }) {
   const s = useKit();
   const C = useColors();
   return (
     <View style={[s.badge, variant === 'ink' && s.badgeInk, variant === 'line' && s.badgeLine, variant === 'danger' && s.badgeDanger]}>
-      <Text style={[s.badgeText, variant === 'ink' && { color: C.white }, variant === 'danger' && { color: C.danger }]}>
+      <Text style={[s.badgeText, variant === 'ink' && { color: '#0b0b0b' }, variant === 'danger' && { color: C.danger }]}>
         {label}
       </Text>
     </View>
   );
 }
 
-/** A glass chip; a chosen chip is tinted with the brand blue. */
+/** A chip; a chosen chip is the chalk pill, the way Folio selects. */
 export function Chip({ label, on, icon, onPress }: { label: string; on?: boolean; icon?: IconName; onPress?: () => void }) {
   const s = useKit();
-  const C = useColors();
+  const fg = on ? '#0b0b0b' : '#c9c8c2';
   const content = (
     <>
-      {icon ? <Icon name={icon} size={14} color={C.ink} /> : null}
-      <Text style={[s.chipText, { color: C.ink }]}>{label}</Text>
+      {icon ? <Icon name={icon} size={14} color={fg} /> : null}
+      <Text style={[s.chipText, { color: fg }]}>{label}</Text>
     </>
   );
-  const look = { bevel: false, tint: on ? GLASS_TINT : undefined, style: s.chip } as const;
+  const look = { tint: on ? '#f4f3ee' : undefined, style: s.chip } as const;
   return onPress ? (
     <GlassPressable {...look} haptic={false} accessibilityState={{ selected: !!on }} onPress={onPress}>
       {content}
@@ -343,9 +332,8 @@ export function Chip({ label, on, icon, onPress }: { label: string; on?: boolean
 }
 
 /**
- * One choice among a few, as a pill: solid ink when it is the one chosen,
- * glass when it is not — never glass with an ink fill behind it, which
- * leaves the lit rims drawing an outline.
+ * One choice among a few, as a pill: the chalk face when it is the one
+ * chosen, an ink tile with a hairline rim when it is not.
  */
 export function PillChoice({
   label,
@@ -361,7 +349,6 @@ export function PillChoice({
   role?: 'button' | 'tab';
 }) {
   const s = useKit();
-  const C = useColors();
   return (
     <Pressable
       accessibilityRole={role}
@@ -371,11 +358,8 @@ export function PillChoice({
         onPress();
       }}
       style={({ pressed }) => [s.pill, on && s.pillOn, pressed && s.pressed]}>
-      {!on ? (
-        <LiquidGlass pointerEvents="none" radius={Radius.full} weight="strong" bevel={false} flat style={StyleSheet.absoluteFill} />
-      ) : null}
-      {icon ? <Icon name={icon} size={14} color={on ? C.white : C.inkSoft} /> : null}
-      <Text style={[s.pillText, on && { color: C.white }]}>{label}</Text>
+      {icon ? <Icon name={icon} size={14} color={on ? '#0b0b0b' : '#c9c8c2'} /> : null}
+      <Text style={[s.pillText, on && { color: '#0b0b0b' }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -395,7 +379,7 @@ export function PillRail({ children, style }: { children: ReactNode; style?: Sty
   );
 }
 
-/** A glass track with an ink thumb on the chosen option. */
+/** A tile track with a chalk thumb on the chosen option. */
 export function Seg<K extends string>({
   options,
   value,
@@ -408,9 +392,8 @@ export function Seg<K extends string>({
   style?: StyleProp<ViewStyle>;
 }) {
   const s = useKit();
-  const C = useColors();
   return (
-    <LiquidGlass bevel={false} style={[s.seg, style]} accessibilityRole="tablist">
+    <View style={[s.seg, style]} accessibilityRole="tablist">
       {options.map((o) => {
         const on = o.key === value;
         return (
@@ -424,16 +407,15 @@ export function Seg<K extends string>({
             }}
             style={s.segBtn}>
             {on ? <View style={[StyleSheet.absoluteFill, s.segOn]} /> : null}
-            <Text style={[s.segText, on && { color: C.white }]}>{o.label}</Text>
+            <Text style={[s.segText, on && { color: '#0b0b0b' }]}>{o.label}</Text>
           </Pressable>
         );
       })}
-    </LiquidGlass>
+    </View>
   );
 }
 
-/** A round icon button: solid glass by default, ink for the one primary action,
- * `lit` glass for a button that floats over a picture. */
+/** A round icon button: a bordered circle, the way Folio heads a screen. */
 export function IconButton({
   icon,
   onPress,
@@ -450,33 +432,18 @@ export function IconButton({
   accessibilityLabel: string;
 }) {
   const s = useKit();
-  const C = useColors();
-  const fg = color ?? (variant === 'ink' ? C.white : C.ink);
+  const fg = color ?? (variant === 'ink' ? '#f4f3ee' : '#c9c8c2');
   const box = { width: size, height: size, borderRadius: size / 2 };
   const glyph = <Icon name={icon} size={Math.round(size * 0.46)} color={fg} />;
-
-  if (variant === 'plain' || variant === 'ink') {
-    return (
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel}
-        onPress={onPress}
-        hitSlop={6}
-        style={({ pressed }) => [s.iconBtn, box, variant === 'ink' && s.iconBtnInk, pressed && s.pressed]}>
-        {glyph}
-      </Pressable>
-    );
-  }
   return (
-    <GlassPressable
+    <Pressable
+      accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}
-      haptic={false}
       hitSlop={6}
-      lit={variant === 'lit'}
-      style={[s.iconBtn, box]}>
+      style={({ pressed }) => [s.iconBtn, box, variant === 'ink' && s.iconBtnInk, pressed && s.pressed]}>
       {glyph}
-    </GlassPressable>
+    </Pressable>
   );
 }
 
@@ -491,15 +458,14 @@ export function Sec({ title, right, kicker }: { title: string; right?: ReactNode
   );
 }
 
-/** Nothing to show: an icon in a glass well, a line, and what to do next. */
+/** Nothing to show: an icon in a tile, a line, and what to do next. */
 export function Empty({ icon, title, children }: { icon: IconName; title: string; children?: ReactNode }) {
   const s = useKit();
-  const C = useColors();
   return (
     <View style={s.empty}>
-      <LiquidGlass style={s.emptyIc}>
-        <Icon name={icon} size={25} color={C.muted} />
-      </LiquidGlass>
+      <View style={s.emptyIc}>
+        <Icon name={icon} size={25} color="#3ddc97" />
+      </View>
       <T3 style={s.center}>{title}</T3>
       {children ? <View style={s.emptyAction}>{children}</View> : null}
     </View>
@@ -524,12 +490,8 @@ export function Notice({
   const C = useColors();
   const err = tone === 'err';
   return (
-    <LiquidGlass
-      radius={Radius.field}
-      bevel={false}
-      reach={0.3}
-      tint={err ? 'rgba(226,61,69,0.1)' : undefined}
-      style={[s.notice, style]}
+    <View
+      style={[s.notice, err && s.noticeErr, style]}
       accessibilityRole={err ? 'alert' : undefined}>
       <Icon name={icon ?? (err ? 'alert-circle-outline' : 'information-circle-outline')} size={18} color={err ? C.danger : C.inkSoft} />
       <Text style={[s.noticeText, err && { color: C.danger }]}>{children}</Text>
@@ -538,13 +500,11 @@ export function Notice({
           <Text style={[s.noticeAction, err && { color: C.danger }]}>Retry</Text>
         </Pressable>
       ) : null}
-    </LiquidGlass>
+    </View>
   );
 }
 
-/** An ink toggle. In dark the `white` token is a dark surface, which an
- * Android thumb (wider than its track) melts into: the thumb stays white, and
- * on is blue there, as white on pale ink would not read as on. */
+/** The app's toggle: mint track when on, the accent's own job. */
 export function Toggle({
   value,
   onChange,
@@ -557,15 +517,14 @@ export function Toggle({
   accessibilityLabel?: string;
 }) {
   const C = useColors();
-  const dark = useScheme() === 'dark';
   return (
     <Switch
       value={value}
       onValueChange={onChange}
       disabled={disabled}
-      trackColor={{ false: C.soft2, true: dark ? C.blue : C.ink }}
-      thumbColor="#FFFFFF"
-      ios_backgroundColor={C.soft2}
+      trackColor={{ false: '#262626', true: C.blue }}
+      thumbColor="#f4f3ee"
+      ios_backgroundColor="#262626"
       accessibilityLabel={accessibilityLabel}
     />
   );
@@ -603,107 +562,129 @@ export function RowFl({ children, style }: { children: ReactNode; style?: StyleP
   return <View style={[s.rowfl, style]}>{children}</View>;
 }
 
-const useKit = makeStyles((C, scheme) => {
-  // Shadows stay dark in both schemes — ink turns light in dark mode.
-  const shade = scheme === 'dark' ? '#000000' : C.ink;
-  const lift = `0 22px 44px -24px ${shade}4D`;
-  const soft = `0 6px 18px -12px ${shade}29`;
-  return {
-    grow: { flex: 1, minWidth: 0 },
-    center: { textAlign: 'center' },
-    rowsp: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-    rowfl: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-    pressed: { opacity: 0.72 },
-    card: { padding: 16 },
-    sur: { padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
-    lstClip: { borderRadius: Radius.panel - 1, borderCurve: 'continuous', overflow: 'hidden' },
-    divider: { height: StyleSheet.hairlineWidth, backgroundColor: C.soft2, marginLeft: 15, marginRight: 15 },
-    row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 15, minHeight: 62 },
-    rowPressed: { backgroundColor: C.soft },
-    rowIcon: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
-      backgroundColor: C.soft,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    value: { maxWidth: '58%', textAlign: 'right' },
-    commit: {
-      backgroundColor: C.commit,
-      borderRadius: Radius.card,
-      borderCurve: 'continuous',
-      padding: 20,
-      boxShadow: lift,
-      overflow: 'hidden',
-    },
-    commitBtn: {
-      flex: 1,
-      height: 40,
-      borderRadius: Radius.full,
-      backgroundColor: 'rgba(255,255,255,0.14)',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
-      gap: 6,
-      paddingHorizontal: 14,
-    },
-    commitBtnText: { color: C.commitInk, fontFamily: Fonts.semibold, fontSize: 14 },
-    smBtn: {
-      height: 40,
-      borderRadius: Radius.full,
-      paddingHorizontal: 16,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'row',
-      gap: 6,
-    },
-    smBtnP: { backgroundColor: C.ink, boxShadow: soft },
-    smBtnD: { backgroundColor: 'rgba(226,61,69,0.1)' },
-    smBtnText: { fontFamily: Fonts.semibold, fontSize: 14 },
-    av: { alignItems: 'center', justifyContent: 'center' },
-    avText: { fontFamily: Fonts.bold, color: C.ink },
-    badge: {
-      height: 24,
-      paddingHorizontal: 9,
-      borderRadius: Radius.full,
-      backgroundColor: C.soft,
-      alignItems: 'center',
-      justifyContent: 'center',
-      alignSelf: 'flex-start',
-    },
-    badgeInk: { backgroundColor: C.ink },
-    badgeLine: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: C.soft2 },
-    badgeDanger: { backgroundColor: 'rgba(226,61,69,0.12)' },
-    badgeText: { fontFamily: Fonts.bold, fontSize: 11.5, color: C.inkSoft, textTransform: 'capitalize' },
-    chip: { height: 34, paddingHorizontal: 13, borderRadius: Radius.full, flexDirection: 'row', alignItems: 'center', gap: 6 },
-    chipText: { fontFamily: Fonts.semibold, fontSize: 13.5 },
-    pill: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 7,
-      paddingHorizontal: 15,
-      minHeight: 38,
-      borderRadius: Radius.full,
-      borderCurve: 'continuous',
-    },
-    pillOn: { backgroundColor: C.ink },
-    pillText: { fontFamily: Fonts.semibold, fontSize: 13.5, color: C.inkSoft },
-    bleed: { marginHorizontal: -20, flexGrow: 0 },
-    rail: { gap: 8, paddingHorizontal: 20, paddingVertical: 2 },
-    seg: { flexDirection: 'row', gap: 4, padding: 4 },
-    segBtn: { flex: 1, height: 36, alignItems: 'center', justifyContent: 'center' },
-    segOn: { backgroundColor: C.ink, borderRadius: Radius.full, borderCurve: 'continuous' },
-    segText: { fontFamily: Fonts.semibold, fontSize: 13.5, color: C.inkSoft },
-    iconBtn: { alignItems: 'center', justifyContent: 'center' },
-    iconBtnInk: { backgroundColor: C.ink, boxShadow: soft },
-    sec: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 30, marginBottom: 12 },
-    empty: { alignItems: 'center', gap: 10, paddingVertical: 46, paddingHorizontal: 24 },
-    emptyIc: { width: 58, height: 58, alignItems: 'center', justifyContent: 'center' },
-    emptyAction: { alignSelf: 'stretch', marginTop: 10 },
-    notice: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 13, paddingHorizontal: 15 },
-    noticeText: { flex: 1, fontFamily: Fonts.regular, fontSize: 12.5, lineHeight: 18, color: C.inkSoft },
-    noticeAction: { fontFamily: Fonts.bold, fontSize: 13, color: C.ink },
-    sk: { backgroundColor: C.soft, borderRadius: 12 },
-  };
-});
+const useKit = makeStyles((C) => ({
+  grow: { flex: 1, minWidth: 0 },
+  center: { textAlign: 'center' },
+  rowsp: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  rowfl: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  pressed: { backgroundColor: '#1d1d1d' },
+  card: { padding: 16 },
+  sur: { padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  lstClip: { borderRadius: Radius.panel - 1, overflow: 'hidden' },
+  divider: { height: StyleSheet.hairlineWidth, backgroundColor: C.soft2, marginLeft: 15, marginRight: 15 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 15, minHeight: 62 },
+  rowPressed: { backgroundColor: '#1d1d1d' },
+  rowIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: '#1d1d1d',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  value: { maxWidth: '58%', textAlign: 'right' },
+  commit: {
+    backgroundColor: C.commit,
+    borderRadius: Radius.card,
+    padding: 20,
+    overflow: 'hidden',
+  },
+  commitBtn: {
+    flex: 1,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 6,
+    paddingHorizontal: 14,
+  },
+  commitBtnText: { color: C.commitInk, fontFamily: Fonts.extrabold, fontSize: 14 },
+  smBtn: {
+    height: 38,
+    borderRadius: Radius.full,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 6,
+  },
+  smBtnP: { backgroundColor: '#f4f3ee' },
+  smBtnD: { backgroundColor: 'rgba(255,107,87,0.13)' },
+  smBtnText: { fontFamily: Fonts.extrabold, fontSize: 13 },
+  av: { alignItems: 'center', justifyContent: 'center' },
+  avText: { fontFamily: Fonts.extrabold, color: C.ink },
+  badge: {
+    height: 22,
+    paddingHorizontal: 9,
+    borderRadius: Radius.full,
+    backgroundColor: '#262626',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+  },
+  badgeInk: { backgroundColor: '#f4f3ee' },
+  badgeLine: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: C.soft2 },
+  badgeDanger: { backgroundColor: 'rgba(255,107,87,0.13)' },
+  badgeText: { fontFamily: Fonts.extrabold, fontSize: 10.5, color: '#c9c8c2', textTransform: 'capitalize' },
+  chip: { height: 34, paddingHorizontal: 13, borderRadius: 17, flexDirection: 'row', alignItems: 'center', gap: 6 },
+  chipText: { fontFamily: Fonts.bold, fontSize: 13 },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    paddingHorizontal: 15,
+    minHeight: 38,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: '#161616',
+  },
+  pillOn: { backgroundColor: '#f4f3ee', borderColor: '#f4f3ee' },
+  pillText: { fontFamily: Fonts.bold, fontSize: 13.5, color: '#c9c8c2' },
+  bleed: { marginHorizontal: -20, flexGrow: 0 },
+  rail: { gap: 8, paddingHorizontal: 20, paddingVertical: 2 },
+  seg: {
+    flexDirection: 'row',
+    gap: 4,
+    padding: 4,
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: '#161616',
+  },
+  segBtn: { flex: 1, height: 34, alignItems: 'center', justifyContent: 'center', borderRadius: 17 },
+  segOn: { backgroundColor: '#f4f3ee', borderRadius: 17 },
+  segText: { fontFamily: Fonts.bold, fontSize: 12.5, color: '#8b8a85' },
+  iconBtn: { alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
+  iconBtnInk: { backgroundColor: '#f4f3ee', borderWidth: 0 },
+  sec: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 30, marginBottom: 12 },
+  empty: { alignItems: 'center', gap: 10, paddingVertical: 36, paddingHorizontal: 24 },
+  emptyIc: {
+    width: 60,
+    height: 60,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: '#161616',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyAction: { alignSelf: 'stretch', marginTop: 10 },
+  notice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 13,
+    paddingHorizontal: 15,
+    borderRadius: Radius.field,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: '#111111',
+  },
+  noticeErr: { borderColor: 'rgba(255,107,87,0.2)', backgroundColor: 'rgba(255,107,87,0.09)' },
+  noticeText: { flex: 1, fontFamily: Fonts.regular, fontSize: 12.5, lineHeight: 18, color: C.inkSoft },
+  noticeAction: { fontFamily: Fonts.bold, fontSize: 13, color: C.ink },
+  sk: { backgroundColor: '#1d1d1d', borderRadius: 12 },
+}));
