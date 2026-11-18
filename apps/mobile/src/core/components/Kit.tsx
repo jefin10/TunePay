@@ -144,9 +144,10 @@ export function Row({
 /** A row's leading icon: a quiet tile, the way Folio insets row icons. */
 export function RowIcon({ name }: { name: IconName }) {
   const s = useKit();
+  const C = useColors();
   return (
     <View style={s.rowIcon}>
-      <Icon name={name} size={19} color="#c9c8c2" />
+      <Icon name={name} size={19} color={C.inkSoft} />
     </View>
   );
 }
@@ -247,7 +248,7 @@ export function SmallButton({
 }) {
   const s = useKit();
   const C = useColors();
-  const fg = variant === 'p' ? '#0b0b0b' : variant === 'd' ? C.danger : C.inkSoft;
+  const fg = variant === 'p' ? C.popInk : variant === 'd' ? C.danger : C.inkSoft;
   const content = (
     <>
       {icon ? <Icon name={icon} size={16} color={fg} /> : null}
@@ -289,9 +290,9 @@ export function Avatar({ name, size = 40, dark }: { name: string | null | undefi
     <View
       style={[
         s.av,
-        { width: size, height: size, borderRadius: size / 2, backgroundColor: dark ? '#f4f3ee' : tintFor(name ?? '', C) },
+        { width: size, height: size, borderRadius: size / 2, backgroundColor: dark ? C.popFace : tintFor(name ?? '', C) },
       ]}>
-      <Text style={[s.avText, { fontSize: size * 0.36 }, dark && { color: '#0b0b0b' }]}>{initials(name ?? '')}</Text>
+      <Text style={[s.avText, { fontSize: size * 0.36 }, dark && { color: C.popInk }]}>{initials(name ?? '')}</Text>
     </View>
   );
 }
@@ -304,7 +305,7 @@ export function Badge({ label, variant = 'soft' }: { label: string; variant?: 's
   const C = useColors();
   return (
     <View style={[s.badge, variant === 'ink' && s.badgeInk, variant === 'line' && s.badgeLine, variant === 'danger' && s.badgeDanger]}>
-      <Text style={[s.badgeText, variant === 'ink' && { color: '#0b0b0b' }, variant === 'danger' && { color: C.danger }]}>
+      <Text style={[s.badgeText, variant === 'ink' && { color: C.popInk }, variant === 'danger' && { color: C.danger }]}>
         {label}
       </Text>
     </View>
@@ -314,14 +315,15 @@ export function Badge({ label, variant = 'soft' }: { label: string; variant?: 's
 /** A chip; a chosen chip is the chalk pill, the way Folio selects. */
 export function Chip({ label, on, icon, onPress }: { label: string; on?: boolean; icon?: IconName; onPress?: () => void }) {
   const s = useKit();
-  const fg = on ? '#0b0b0b' : '#c9c8c2';
+  const C = useColors();
+  const fg = on ? C.popInk : C.inkSoft;
   const content = (
     <>
       {icon ? <Icon name={icon} size={14} color={fg} /> : null}
       <Text style={[s.chipText, { color: fg }]}>{label}</Text>
     </>
   );
-  const look = { tint: on ? '#f4f3ee' : undefined, style: s.chip } as const;
+  const look = { tint: on ? C.popFace : undefined, style: s.chip } as const;
   return onPress ? (
     <GlassPressable {...look} haptic={false} accessibilityState={{ selected: !!on }} onPress={onPress}>
       {content}
@@ -349,6 +351,7 @@ export function PillChoice({
   role?: 'button' | 'tab';
 }) {
   const s = useKit();
+  const C = useColors();
   return (
     <Pressable
       accessibilityRole={role}
@@ -358,8 +361,8 @@ export function PillChoice({
         onPress();
       }}
       style={({ pressed }) => [s.pill, on && s.pillOn, pressed && s.pressed]}>
-      {icon ? <Icon name={icon} size={14} color={on ? '#0b0b0b' : '#c9c8c2'} /> : null}
-      <Text style={[s.pillText, on && { color: '#0b0b0b' }]}>{label}</Text>
+      {icon ? <Icon name={icon} size={14} color={on ? C.popInk : C.inkSoft} /> : null}
+      <Text style={[s.pillText, on && { color: C.popInk }]}>{label}</Text>
     </Pressable>
   );
 }
@@ -392,6 +395,7 @@ export function Seg<K extends string>({
   style?: StyleProp<ViewStyle>;
 }) {
   const s = useKit();
+  const C = useColors();
   return (
     <View style={[s.seg, style]} accessibilityRole="tablist">
       {options.map((o) => {
@@ -407,7 +411,7 @@ export function Seg<K extends string>({
             }}
             style={s.segBtn}>
             {on ? <View style={[StyleSheet.absoluteFill, s.segOn]} /> : null}
-            <Text style={[s.segText, on && { color: '#0b0b0b' }]}>{o.label}</Text>
+            <Text style={[s.segText, on && { color: C.popInk }]}>{o.label}</Text>
           </Pressable>
         );
       })}
@@ -432,7 +436,8 @@ export function IconButton({
   accessibilityLabel: string;
 }) {
   const s = useKit();
-  const fg = color ?? (variant === 'ink' ? '#f4f3ee' : '#c9c8c2');
+  const C = useColors();
+  const fg = color ?? (variant === 'ink' ? C.popInk : C.inkSoft);
   const box = { width: size, height: size, borderRadius: size / 2 };
   const glyph = <Icon name={icon} size={Math.round(size * 0.46)} color={fg} />;
   return (
@@ -461,10 +466,11 @@ export function Sec({ title, right, kicker }: { title: string; right?: ReactNode
 /** Nothing to show: an icon in a tile, a line, and what to do next. */
 export function Empty({ icon, title, children }: { icon: IconName; title: string; children?: ReactNode }) {
   const s = useKit();
+  const C = useColors();
   return (
     <View style={s.empty}>
       <View style={s.emptyIc}>
-        <Icon name={icon} size={25} color="#3ddc97" />
+        <Icon name={icon} size={25} color={C.blue} />
       </View>
       <T3 style={s.center}>{title}</T3>
       {children ? <View style={s.emptyAction}>{children}</View> : null}
@@ -522,9 +528,9 @@ export function Toggle({
       value={value}
       onValueChange={onChange}
       disabled={disabled}
-      trackColor={{ false: '#262626', true: C.blue }}
-      thumbColor="#f4f3ee"
-      ios_backgroundColor="#262626"
+      trackColor={{ false: C.g2, true: C.blue }}
+      thumbColor={C.popFace}
+      ios_backgroundColor={C.g2}
       accessibilityLabel={accessibilityLabel}
     />
   );
@@ -567,18 +573,18 @@ const useKit = makeStyles((C) => ({
   center: { textAlign: 'center' },
   rowsp: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
   rowfl: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  pressed: { backgroundColor: '#1d1d1d' },
+  pressed: { backgroundColor: C.tile },
   card: { padding: 16 },
   sur: { padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 },
   lstClip: { borderRadius: Radius.panel - 1, overflow: 'hidden' },
   divider: { height: StyleSheet.hairlineWidth, backgroundColor: C.soft2, marginLeft: 15, marginRight: 15 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 15, minHeight: 62 },
-  rowPressed: { backgroundColor: '#1d1d1d' },
+  rowPressed: { backgroundColor: C.tile },
   rowIcon: {
     width: 38,
     height: 38,
     borderRadius: 12,
-    backgroundColor: '#1d1d1d',
+    backgroundColor: C.tile,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -610,7 +616,7 @@ const useKit = makeStyles((C) => ({
     flexDirection: 'row',
     gap: 6,
   },
-  smBtnP: { backgroundColor: '#f4f3ee' },
+  smBtnP: { backgroundColor: C.popFace },
   smBtnD: { backgroundColor: 'rgba(255,107,87,0.13)' },
   smBtnText: { fontFamily: Fonts.extrabold, fontSize: 13 },
   av: { alignItems: 'center', justifyContent: 'center' },
@@ -619,15 +625,15 @@ const useKit = makeStyles((C) => ({
     height: 22,
     paddingHorizontal: 9,
     borderRadius: Radius.full,
-    backgroundColor: '#262626',
+    backgroundColor: C.g2,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'flex-start',
   },
-  badgeInk: { backgroundColor: '#f4f3ee' },
+  badgeInk: { backgroundColor: C.popFace },
   badgeLine: { backgroundColor: 'transparent', borderWidth: 1.5, borderColor: C.soft2 },
   badgeDanger: { backgroundColor: 'rgba(255,107,87,0.13)' },
-  badgeText: { fontFamily: Fonts.extrabold, fontSize: 10.5, color: '#c9c8c2', textTransform: 'capitalize' },
+  badgeText: { fontFamily: Fonts.extrabold, fontSize: 10.5, color: C.inkSoft, textTransform: 'capitalize' },
   chip: { height: 34, paddingHorizontal: 13, borderRadius: 17, flexDirection: 'row', alignItems: 'center', gap: 6 },
   chipText: { fontFamily: Fonts.bold, fontSize: 13 },
   pill: {
@@ -639,10 +645,10 @@ const useKit = makeStyles((C) => ({
     borderRadius: Radius.full,
     borderWidth: 1,
     borderColor: C.line,
-    backgroundColor: '#161616',
+    backgroundColor: C.soft,
   },
-  pillOn: { backgroundColor: '#f4f3ee', borderColor: '#f4f3ee' },
-  pillText: { fontFamily: Fonts.bold, fontSize: 13.5, color: '#c9c8c2' },
+  pillOn: { backgroundColor: C.popFace, borderColor: C.popFace },
+  pillText: { fontFamily: Fonts.bold, fontSize: 13.5, color: C.inkSoft },
   bleed: { marginHorizontal: -20, flexGrow: 0 },
   rail: { gap: 8, paddingHorizontal: 20, paddingVertical: 2 },
   seg: {
@@ -652,13 +658,13 @@ const useKit = makeStyles((C) => ({
     borderRadius: 22,
     borderWidth: 1,
     borderColor: C.line,
-    backgroundColor: '#161616',
+    backgroundColor: C.soft,
   },
   segBtn: { flex: 1, height: 34, alignItems: 'center', justifyContent: 'center', borderRadius: 17 },
-  segOn: { backgroundColor: '#f4f3ee', borderRadius: 17 },
-  segText: { fontFamily: Fonts.bold, fontSize: 12.5, color: '#8b8a85' },
-  iconBtn: { alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.14)' },
-  iconBtnInk: { backgroundColor: '#f4f3ee', borderWidth: 0 },
+  segOn: { backgroundColor: C.popFace, borderRadius: 17 },
+  segText: { fontFamily: Fonts.bold, fontSize: 12.5, color: C.muted },
+  iconBtn: { alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: C.glassRimStrong },
+  iconBtnInk: { backgroundColor: C.popFace, borderWidth: 0 },
   sec: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginTop: 30, marginBottom: 12 },
   empty: { alignItems: 'center', gap: 10, paddingVertical: 36, paddingHorizontal: 24 },
   emptyIc: {
@@ -667,7 +673,7 @@ const useKit = makeStyles((C) => ({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: C.line,
-    backgroundColor: '#161616',
+    backgroundColor: C.soft,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -681,10 +687,10 @@ const useKit = makeStyles((C) => ({
     borderRadius: Radius.field,
     borderWidth: 1,
     borderColor: C.line,
-    backgroundColor: '#111111',
+    backgroundColor: C.white,
   },
   noticeErr: { borderColor: 'rgba(255,107,87,0.2)', backgroundColor: 'rgba(255,107,87,0.09)' },
   noticeText: { flex: 1, fontFamily: Fonts.regular, fontSize: 12.5, lineHeight: 18, color: C.inkSoft },
   noticeAction: { fontFamily: Fonts.bold, fontSize: 13, color: C.ink },
-  sk: { backgroundColor: '#1d1d1d', borderRadius: 12 },
+  sk: { backgroundColor: C.tile, borderRadius: 12 },
 }));

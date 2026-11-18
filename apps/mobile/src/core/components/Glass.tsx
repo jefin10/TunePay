@@ -4,10 +4,9 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 import type { ComponentRef, ReactNode, RefObject } from 'react';
 import { createContext, useContext } from 'react';
 
-import { Motion, Radius } from '@/core/theme';
+import { Motion, Radius, useColors, type Palette } from '@/core/theme';
 
 import { Icon } from './Icon';
-import { useTone, type Tone } from './Tone';
 
 /**
  * The surfaces of Folio, kept behind the glass API the app already speaks:
@@ -39,17 +38,12 @@ export const BlurTargetContext = createContext<RefObject<ComponentRef<typeof Vie
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const FILL: Record<Tone, Record<GlassWeight, string>> = {
-  light: { regular: '#161616', strong: '#111111' },
-  dark: { regular: '#161616', strong: '#111111' },
-};
-
-function surface({ radius = Radius.full, weight = 'regular', tint }: GlassLook, tone: Tone): ViewStyle {
+function surface({ radius = Radius.full, weight = 'regular', tint }: GlassLook, C: Palette): ViewStyle {
   return {
     borderRadius: radius,
-    backgroundColor: tint ?? FILL[tone][weight],
+    backgroundColor: tint ?? (weight === 'strong' ? C.white : C.soft),
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.08)',
+    borderColor: C.line,
   };
 }
 
@@ -59,9 +53,9 @@ interface LiquidGlassProps extends ViewProps, GlassLook {
 
 /** A flat Folio plate. */
 export function LiquidGlass({ radius, weight, tint, bevel, reach, flat, blur, blurKey, lit, style, children, ...rest }: LiquidGlassProps) {
-  const tone = useTone();
+  const C = useColors();
   return (
-    <View style={[surface({ radius, weight, tint }, tone), style]} {...rest}>
+    <View style={[surface({ radius, weight, tint }, C), style]} {...rest}>
       {children}
     </View>
   );
@@ -94,7 +88,7 @@ export function GlassPressable({
   onPress,
   ...rest
 }: GlassPressableProps) {
-  const tone = useTone();
+  const C = useColors();
   const press = useSharedValue(0);
 
   const pressStyle = useAnimatedStyle(() => ({ transform: [{ scale: 1 - press.get() * 0.03 }] }));
@@ -117,13 +111,13 @@ export function GlassPressable({
         if (haptic) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         onPress?.(e);
       }}
-      style={[surface({ radius, weight, tint }, tone), disabled && styles.disabled, pressStyle, style]}
+      style={[surface({ radius, weight, tint }, C), disabled && styles.disabled, pressStyle, style]}
       {...rest}>
       <Animated.View
         pointerEvents="none"
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: '#1d1d1d', borderRadius: Math.max((radius ?? Radius.full) - 1, 0) },
+          { backgroundColor: C.soft2, borderRadius: Math.max((radius ?? Radius.full) - 1, 0) },
           glowStyle,
         ]}
       />
@@ -134,9 +128,10 @@ export function GlassPressable({
 
 /** A recessed round well with a chevron. */
 export function GlassChevron({ size = 34 }: { size?: number }) {
+  const C = useColors();
   return (
-    <View style={[styles.well, { width: size, height: size, borderRadius: size / 2 }]}>
-      <Icon name="chevron-forward" size={Math.round(size * 0.44)} color="#c9c8c2" />
+    <View style={[styles.well, { width: size, height: size, borderRadius: size / 2, backgroundColor: C.tile }]}>
+      <Icon name="chevron-forward" size={Math.round(size * 0.44)} color={C.inkSoft} />
     </View>
   );
 }
@@ -148,7 +143,6 @@ const styles = StyleSheet.create({
   well: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1d1d1d',
   },
   disabled: {
     opacity: 0.4,

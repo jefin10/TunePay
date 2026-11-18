@@ -33,17 +33,16 @@ export function AppButton(props: AppButtonProps) {
   return <PopButton {...props} />;
 }
 
-const TONES = {
-  primary: { face: '#f4f3ee', r: '#9a9994', b: '#6b6a66', ink: '#0b0b0b' },
-  secondary: { face: '#1d1d1d', r: '#343432', b: '#262624', ink: '#f4f3ee' },
-  danger: { face: '#ff6b57', r: '#c24636', b: '#8a2c20', ink: '#1d0603' },
-} as const;
-
 const DEPTH = 5;
 
 function PopButton({ label, onPress, variant = 'primary', loading = false, disabled = false, style, leading, chevron, accessibilityLabel }: AppButtonProps) {
   const C = useColors();
-  const t = disabled || loading ? { face: '#1d1d1d', r: '#2a2a28', b: '#222220', ink: C.muted } : TONES[variant];
+  const TONES = {
+    primary: { face: C.popFace, r: C.popR, b: C.popB, ink: C.popInk },
+    secondary: { face: C.pop2Face, r: C.pop2R, b: C.pop2B, ink: C.pop2Ink },
+    danger: { face: C.danger, r: '#c24636', b: '#8a2c20', ink: '#1d0603' },
+  } as const;
+  const t = disabled || loading ? { face: C.pop2Face, r: C.pop2R, b: C.pop2B, ink: C.muted } : TONES[variant];
   const press = useSharedValue(0);
   const faceStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: press.value * DEPTH }, { translateY: press.value * DEPTH }],
