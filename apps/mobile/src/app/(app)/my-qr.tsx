@@ -110,7 +110,6 @@ const useStyles = makeStyles((C) => ({
     borderRadius: Radius.card,
     borderCurve: 'continuous',
     backgroundColor: Colors.white,
-    boxShadow: '0 22px 44px -24px rgba(10,10,11,0.3)',
   },
   person: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   name: { fontFamily: Fonts.medium, fontSize: 17, color: Colors.ink, letterSpacing: -0.2 },

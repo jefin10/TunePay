@@ -75,11 +75,9 @@ const useStyles = makeStyles((C, scheme) => ({
     backgroundColor: C.ink,
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: scheme === 'dark' ? '0 18px 40px -14px rgba(77,169,252,0.55)' : '0 22px 44px -20px rgba(10,10,11,0.55)',
   },
   discLive: {
     backgroundColor: Colors.blue600,
-    boxShadow: '0 0 0 6px rgba(77,169,252,0.18), 0 18px 40px -12px rgba(46,144,240,0.7)',
   },
   disabled: { opacity: 0.45 },
   ring: {

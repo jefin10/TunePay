@@ -218,7 +218,7 @@ const useStyles = makeStyles((C) => ({
   samples: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   card: { gap: 10, padding: 20 },
   listeningRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.blue, boxShadow: '0 0 8px rgba(77,169,252,0.8)' },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.blue },
   transcript: { fontFamily: Fonts.light, fontSize: 24, lineHeight: 30, letterSpacing: -0.4, color: C.ink },
   processing: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 4 },
   reply: { paddingRight: 40 },

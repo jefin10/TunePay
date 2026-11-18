@@ -175,10 +175,8 @@ const useStyles = makeStyles((C, scheme) => ({
     height: 52,
     paddingHorizontal: 22,
     borderRadius: Radius.full,
-    backgroundColor: C.ink,
-    boxShadow:
-      scheme === 'dark' ? '0 18px 40px -14px rgba(77,169,252,0.55)' : '0 22px 44px -20px rgba(10,10,11,0.5)',
+    backgroundColor: C.popFace,
   },
-  fabText: { fontFamily: Fonts.semibold, fontSize: 15, color: C.white },
+  fabText: { fontFamily: Fonts.extrabold, fontSize: 15, color: C.popInk },
   pressed: { opacity: 0.8 },
 }));

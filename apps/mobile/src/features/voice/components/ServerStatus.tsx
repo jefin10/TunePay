@@ -29,6 +29,6 @@ export function ServerStatus() {
 const useStyles = makeStyles((C) => ({
   pill: { flexDirection: 'row', alignItems: 'center', gap: 7, height: 34, paddingHorizontal: 13 },
   dot: { width: 7, height: 7, borderRadius: 4 },
-  glow: { boxShadow: '0 0 8px rgba(77,169,252,0.8)' },
+  glow: {},
   text: { fontFamily: Fonts.semibold, fontSize: 13, color: C.ink },
 }));

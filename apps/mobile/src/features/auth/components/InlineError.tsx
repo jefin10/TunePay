@@ -23,9 +23,9 @@ export function nudge(setError: (message: string) => void, message: string) {
   setError(message);
 }
 
-const useStyles = makeStyles((C, scheme) => ({
+const useStyles = makeStyles((C) => ({
   text: {
-    color: scheme === 'dark' ? '#FF8A90' : C.danger,
+    color: C.danger,
     fontFamily: Fonts.medium,
     fontSize: 13,
     textAlign: 'center',

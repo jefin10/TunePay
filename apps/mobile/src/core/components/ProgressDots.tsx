@@ -32,21 +32,20 @@ function Fill({ current }: { current: boolean }) {
   return <Animated.View style={[styles.fill, style]} />;
 }
 
-const useStyles = makeStyles((C, scheme) => ({
+const useStyles = makeStyles((C) => ({
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.one + 1 },
   segment: {
     width: 20,
     height: 3,
     borderRadius: 2,
     overflow: 'hidden',
-    backgroundColor: scheme === 'dark' ? 'rgba(255,255,255,0.12)' : C.soft2,
+    backgroundColor: C.soft2,
   },
   // The step you are on reads as the one to look at: longer and thicker.
   current: { width: 34, height: 5, borderRadius: 3 },
   fill: {
     height: '100%',
     borderRadius: 2,
-    backgroundColor: scheme === 'dark' ? C.fieldText : C.blue600,
-    boxShadow: scheme === 'dark' ? '0 0 8px rgba(77,169,252,0.7)' : undefined,
+    backgroundColor: C.blue,
   },
 }));

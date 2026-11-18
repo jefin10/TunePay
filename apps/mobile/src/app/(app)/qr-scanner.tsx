@@ -206,7 +206,7 @@ function Action({ icon, label, onPress }: { icon: IconName; label: string; onPre
 const CORNER = 34;
 
 const useStyles = makeStyles((C, scheme) => ({
-  root: { flex: 1, backgroundColor: '#060709' },
+  root: { flex: 1, backgroundColor: '#0b0b0b' },
   topScrim: { position: 'absolute', top: 0, left: 0, right: 0, height: 200 },
   overlay: { flex: 1 },
   flex: { flex: 1 },
@@ -229,7 +229,6 @@ const useStyles = makeStyles((C, scheme) => ({
     height: 2,
     borderRadius: 1,
     backgroundColor: Colors.blue,
-    boxShadow: '0 0 12px rgba(77,169,252,0.9)',
   },
   panel: {
     marginHorizontal: 12,

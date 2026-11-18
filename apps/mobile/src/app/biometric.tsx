@@ -108,6 +108,6 @@ const useStyles = makeStyles((C) => ({
     height: 38,
     paddingHorizontal: 16,
   },
-  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.blue, boxShadow: '0 0 8px rgba(77,169,252,0.7)' },
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.blue },
   statusText: { fontFamily: Fonts.medium, fontSize: 13.5, color: C.fieldText },
 }));
