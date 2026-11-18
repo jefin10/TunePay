@@ -1,27 +1,26 @@
-import { Roboto_300Light } from '@expo-google-fonts/roboto/300Light';
-import { Roboto_400Regular } from '@expo-google-fonts/roboto/400Regular';
-import { Roboto_500Medium } from '@expo-google-fonts/roboto/500Medium';
-import { Roboto_600SemiBold } from '@expo-google-fonts/roboto/600SemiBold';
-import { Roboto_700Bold } from '@expo-google-fonts/roboto/700Bold';
+import { Manrope_500Medium } from '@expo-google-fonts/manrope/500Medium';
+import { Manrope_600SemiBold } from '@expo-google-fonts/manrope/600SemiBold';
+import { Manrope_700Bold } from '@expo-google-fonts/manrope/700Bold';
+import { Manrope_800ExtraBold } from '@expo-google-fonts/manrope/800ExtraBold';
 
 /**
- * Roboto throughout: light for display, regular for body, semibold for
- * labels. Custom fonts in React Native need one family per weight, so styles
- * pick the family and never set fontWeight — on Android a weight alongside a
- * custom family swaps Roboto for the system font.
+ * Manrope throughout, the Folio system: headings and figures lean on the
+ * heavy weights (700 display / 800 display-bold), body runs in 500, labels
+ * in 600. One family per weight — styles pick the family and never set
+ * fontWeight, which on Android would swap Manrope for the system font.
  */
 export const fontAssets = {
-  Roboto_300Light,
-  Roboto_400Regular,
-  Roboto_500Medium,
-  Roboto_600SemiBold,
-  Roboto_700Bold,
+  Manrope_500Medium,
+  Manrope_600SemiBold,
+  Manrope_700Bold,
+  Manrope_800ExtraBold,
 };
 
 export const Fonts = {
-  light: 'Roboto_300Light',
-  regular: 'Roboto_400Regular',
-  medium: 'Roboto_500Medium',
-  semibold: 'Roboto_600SemiBold',
-  bold: 'Roboto_700Bold',
+  light: 'Manrope_500Medium',
+  regular: 'Manrope_500Medium',
+  medium: 'Manrope_500Medium',
+  semibold: 'Manrope_600SemiBold',
+  bold: 'Manrope_700Bold',
+  extrabold: 'Manrope_800ExtraBold',
 } as const;
