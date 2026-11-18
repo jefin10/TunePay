@@ -51,25 +51,29 @@ def verify_otp(request):
         return JsonResponse({"status": "error", "message": "Phone and OTP required"}, status=400)
     
     try:
+        # Debug-only bypass: fixed OTP works without any DB entry.
+        otp_bypassed = settings.DEBUG and otp == "123456"
+
         phone_candidates = get_phone_candidates(phone)
 
-        # Get the most recent OTP for this phone
-        otp_entry = OTP.objects.filter(phoneNumber__in=phone_candidates).first()
-        
-        if not otp_entry:
-            return JsonResponse({"status": "error", "message": "No OTP found. Please request a new one."}, status=404)
-        
-        # Check if OTP is valid
-        if not otp_entry.is_valid():
-            return JsonResponse({"status": "error", "message": "OTP expired. Please request a new one."}, status=400)
-        
-        # Check if OTP matches
-        if otp_entry.otp != otp:
-            return JsonResponse({"status": "error", "message": "Invalid OTP"}, status=400)
-        
-        # Mark OTP as verified
-        otp_entry.is_verified = True
-        otp_entry.save()
+        if not otp_bypassed:
+            # Get the most recent OTP for this phone
+            otp_entry = OTP.objects.filter(phoneNumber__in=phone_candidates).first()
+
+            if not otp_entry:
+                return JsonResponse({"status": "error", "message": "No OTP found. Please request a new one."}, status=404)
+
+            # Check if OTP is valid
+            if not otp_entry.is_valid():
+                return JsonResponse({"status": "error", "message": "OTP expired. Please request a new one."}, status=400)
+
+            # Check if OTP matches
+            if otp_entry.otp != otp:
+                return JsonResponse({"status": "error", "message": "Invalid OTP"}, status=400)
+
+            # Mark OTP as verified
+            otp_entry.is_verified = True
+            otp_entry.save()
         
         # Check if user exists
         try:
