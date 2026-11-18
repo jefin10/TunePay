@@ -3,7 +3,6 @@ export { AppDialog, DialogActions, DialogMessage, DialogTitle, type DialogAction
 export { AppText, Cap, Kick, Lab, Num, Sm, Soft, T1, T2, T3, T4, useText } from './AppText';
 export { Entrance, Stagger } from './Entrance';
 export { Field } from './Field';
-export { FieldBackdrop } from './FieldBackdrop';
 export { BlurTargetContext, GLASS_TINT, GlassChevron, GlassPressable, LiquidGlass } from './Glass';
 export { Icon, type IconName } from './Icon';
 export { KeyboardLift } from './KeyboardLift';

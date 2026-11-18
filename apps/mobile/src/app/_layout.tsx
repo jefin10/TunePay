@@ -10,7 +10,7 @@ import { StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { FieldBackdrop, Toaster } from '@/core/components';
+import { Toaster } from '@/core/components';
 import { queryClient } from '@/core/query-client';
 import { selectNeedsUnlock, useSession } from '@/core/storage/session';
 import { fontAssets, Palettes, ThemeProvider, useScheme } from '@/core/theme';
@@ -68,9 +68,6 @@ function ThemedApp() {
       <QueryClientProvider client={queryClient}>
         <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         <View style={[styles.root, { backgroundColor: C.ground }]}>
-          {/* One ground behind every screen: plain everywhere but the unlock
-              and sign-in, which fade into the shaded sheets of light. */}
-          <FieldBackdrop />
           {/* Guards pick the screen: wallet once unlocked, the biometric gate
               while locked, onboarding when logged out. Flipping session state
               is all a screen needs to do to move between them. */}
