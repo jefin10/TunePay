@@ -83,7 +83,7 @@ export function DialogActions({ actions }: { actions: DialogAction[] }) {
 
 const useStyles = makeStyles((C) => ({
   host: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 28 },
-  scrim: { flex: 1, backgroundColor: 'rgba(8,10,14,0.55)' },
+  scrim: { flex: 1, backgroundColor: 'rgba(11,11,11,0.55)' },
   plate: {
     width: '100%',
     maxWidth: 340,
@@ -93,10 +93,9 @@ const useStyles = makeStyles((C) => ({
     backgroundColor: C.white,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: C.line,
-    boxShadow: '0 30px 60px -24px rgba(0,0,0,0.55)',
   },
-  title: { fontFamily: Fonts.semibold, fontSize: 18, lineHeight: 24, letterSpacing: -0.2, color: C.ink },
-  message: { fontFamily: Fonts.regular, fontSize: 14.5, lineHeight: 21, color: C.muted, marginTop: 6 },
+  title: { fontFamily: Fonts.extrabold, fontSize: 17, lineHeight: 23, letterSpacing: -0.2, color: C.ink },
+  message: { fontFamily: Fonts.regular, fontSize: 13.5, lineHeight: 20, color: C.muted, marginTop: 6 },
   actions: { gap: 10, marginTop: 22 },
   actionsRow: { flexDirection: 'row' },
   action: {
@@ -108,13 +107,12 @@ const useStyles = makeStyles((C) => ({
     justifyContent: 'center',
   },
   actionGrow: { flex: 1 },
-  primary: { backgroundColor: C.ink },
-  // `C.white` is the scheme's surface, so on ink it is always the opposite tone.
-  primaryText: { fontFamily: Fonts.semibold, fontSize: 15, color: C.white },
+  primary: { backgroundColor: C.popFace },
+  primaryText: { fontFamily: Fonts.bold, fontSize: 15, color: C.popInk },
   danger: { backgroundColor: C.danger },
   // Literal white: this sits on red in both schemes.
-  dangerText: { fontFamily: Fonts.semibold, fontSize: 15, color: '#FFFFFF' },
+  dangerText: { fontFamily: Fonts.bold, fontSize: 15, color: '#FFFFFF' },
   quiet: { backgroundColor: C.soft },
-  quietText: { fontFamily: Fonts.semibold, fontSize: 15, color: C.ink },
+  quietText: { fontFamily: Fonts.bold, fontSize: 15, color: C.ink },
   pressed: { opacity: 0.75 },
 }));

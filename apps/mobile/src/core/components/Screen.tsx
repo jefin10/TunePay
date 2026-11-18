@@ -11,7 +11,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { makeStyles, Radius, useColors } from '@/core/theme';
+import { makeStyles, Radius, useColors, useScheme } from '@/core/theme';
 
 import { useText } from './AppText';
 import { IconButton } from './Kit';
@@ -93,7 +93,7 @@ export function Screen({
 
   return (
     <View style={styles.fill}>
-      <StatusBar style="light" />
+      <StatusBar style={useScheme() === 'dark' ? 'light' : 'dark'} />
       <KeyboardLift style={styles.fill}>
         {body}
         {footer}
@@ -152,19 +152,20 @@ export function TopNav({
   );
 }
 
-/** A static bottom bar for primary actions on non-docked screens: an ink
- * plate with a hairline top edge, the way Folio raises a sheet. */
+/** A static bottom bar for primary actions on non-docked screens: a plate
+ * with a hairline top edge, the way Folio raises a sheet. */
 export function ActionBar({ children }: { children: ReactNode }) {
+  const C = useColors();
   const styles = useStyles();
   const insets = useSafeAreaInsets();
-  return <View style={[styles.actionBar, { paddingBottom: Math.max(insets.bottom, 12) + 6 }]}>{children}</View>;
+  return <View style={[styles.actionBar, sheetSurface(C), { paddingBottom: Math.max(insets.bottom, 12) + 6 }]}>{children}</View>;
 }
 
-/** Sheets and the action bar: an ink-1 plate with a hairline top edge. */
-export const sheetSurface = () => ({
-  backgroundColor: '#111111',
+/** Sheets and the action bar: a plate with a hairline top edge. */
+export const sheetSurface = (C: { white: string; line: string }) => ({
+  backgroundColor: C.white,
   borderTopWidth: StyleSheet.hairlineWidth,
-  borderTopColor: 'rgba(255,255,255,0.08)',
+  borderTopColor: C.line,
 });
 
 const useStyles = makeStyles((_C) => ({
@@ -184,6 +185,5 @@ const useStyles = makeStyles((_C) => ({
     borderTopLeftRadius: Radius.sheet,
     borderTopRightRadius: Radius.sheet,
     gap: 10,
-    ...sheetSurface(),
   },
 }));

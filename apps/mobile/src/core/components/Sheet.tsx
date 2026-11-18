@@ -3,7 +3,7 @@ import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-nati
 import Animated, { Easing, FadeIn, SlideInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { makeStyles, Radius } from '@/core/theme';
+import { makeStyles, Radius, useColors } from '@/core/theme';
 
 import { useText } from './AppText';
 import { KeyboardLift } from './KeyboardLift';
@@ -29,6 +29,7 @@ export function Sheet({
 }) {
   const styles = useStyles();
   const t = useText();
+  const C = useColors();
   const insets = useSafeAreaInsets();
   return (
     <Modal
@@ -49,7 +50,7 @@ export function Sheet({
         <View style={styles.host} pointerEvents="box-none">
           <Animated.View
             entering={SlideInDown.duration(320).easing(DRAWER)}
-            style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) + 14 }]}
+            style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 16) + 14 }, sheetSurface(C)]}
             accessibilityViewIsModal>
             <View style={styles.handle} />
             <ScrollView
@@ -73,7 +74,7 @@ export function Sheet({
 
 const useStyles = makeStyles((C, scheme) => ({
   fill: { flex: 1 },
-  dim: { backgroundColor: scheme === 'dark' ? 'rgba(0,0,0,0.66)' : 'rgba(10,10,11,0.52)' },
+  dim: { backgroundColor: scheme === 'dark' ? 'rgba(0,0,0,0.62)' : 'rgba(11,11,11,0.45)' },
   host: { flex: 1, justifyContent: 'flex-end' },
   sheet: {
     maxHeight: '92%',
@@ -82,7 +83,6 @@ const useStyles = makeStyles((C, scheme) => ({
     borderCurve: 'continuous',
     paddingTop: 10,
     paddingHorizontal: 20,
-    ...sheetSurface(scheme),
   },
   handle: {
     width: 38,

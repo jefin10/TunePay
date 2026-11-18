@@ -238,7 +238,7 @@ const useStyles = makeStyles((C, scheme) => ({
     gap: 16,
     borderRadius: Radius.sheet,
     borderCurve: 'continuous',
-    ...sheetSurface(scheme),
+    ...sheetSurface(C),
   },
   result: { gap: 10 },
   resultHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },

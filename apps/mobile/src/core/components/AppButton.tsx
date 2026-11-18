@@ -42,7 +42,7 @@ function PopButton({ label, onPress, variant = 'primary', loading = false, disab
     secondary: { face: C.pop2Face, r: C.pop2R, b: C.pop2B, ink: C.pop2Ink },
     danger: { face: C.danger, r: '#c24636', b: '#8a2c20', ink: '#1d0603' },
   } as const;
-  const t = disabled || loading ? { face: C.pop2Face, r: C.pop2R, b: C.pop2B, ink: C.muted } : TONES[variant];
+  const t = disabled || loading ? { face: C.pop2Face, r: C.pop2R, b: C.pop2B, ink: C.muted } : TONES[variant === 'ghost' ? 'primary' : variant];
   const press = useSharedValue(0);
   const faceStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: press.value * DEPTH }, { translateY: press.value * DEPTH }],

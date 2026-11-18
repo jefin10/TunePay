@@ -65,25 +65,15 @@ export function TabScene({ name, children }: { name: string; children: ReactNode
   );
 }
 
-/** The dock floats over scrolling content, so it is the one glass surface that
- * has to stop that content being read through it. In light it is a mostly
- * solid pale fill over a heavily blurred backdrop; the fill is high because
- * the blur is not guaranteed — below Android 12 there is none. In dark it is
- * lit glass, which already turns solid without a blur. */
-const DOCK_FILL_LIGHT = 'rgba(252,253,255,0.84)';
-/** In dark the dock stays dark over anything, even a white card scrolling under it. */
-const DOCK_FILL_DARK = 'rgba(22,25,31,0.9)';
-const DOCK_BLUR = 80;
-
+/** A floating plate of three tabs: Home, Voice and Profile. The tab you are
+ * on is marked by the pop face — chalk on ink, ink on paper — that slides
+ * onto it and inverts the icon and label inside it; everything else stays
+ * dim. */
 const DOCK_RADIUS = Platform.OS === 'android' ? 28 : Radius.full;
 const ITEM_RADIUS = Platform.OS === 'android' ? 24 : Radius.full;
 
-/** A floating pale pill of three tabs: Home, Voice and Profile. The tab you
- * are on is marked by a solid ink capsule that slides onto it and inverts the
- * icon and label inside it; everything else stays grey. */
 export function TabBar({ state, navigateToTab }: BottomTabBarProps) {
   const C = useColors();
-  const scheme = useScheme();
   const styles = useStyles();
   const insets = useSafeAreaInsets();
   const reduce = useReduceMotion();
@@ -110,10 +100,7 @@ export function TabBar({ state, navigateToTab }: BottomTabBarProps) {
           radius={DOCK_RADIUS}
           reach={0.12}
           weight="strong"
-          lit
-          tint={scheme === 'light' ? DOCK_FILL_LIGHT : DOCK_FILL_DARK}
-          blur={DOCK_BLUR}
-          blurKey={blurTarget ? activeKey : undefined}
+          tint={C.white}
           style={styles.dock}>
           {/* The row is its own box so the capsule and the measured slots
               share one origin — no padding sits between them. */}
@@ -140,7 +127,7 @@ export function TabBar({ state, navigateToTab }: BottomTabBarProps) {
               const focused = state.index === index;
               // Inside the ink capsule the pair inverts; outside it both stay
               // grey — a lighter grey on the dark dock's lit glass, so they still read.
-              const tint = focused ? C.white : scheme === 'dark' ? C.inkSoft : C.muted;
+              const tint = focused ? C.popInk : C.inkSoft;
               return (
                 <Pressable
                   key={route.key}
@@ -155,7 +142,7 @@ export function TabBar({ state, navigateToTab }: BottomTabBarProps) {
                   }}
                   style={styles.item}>
                   <DockIcon name={meta.icon} active={focused} color={tint} />
-                  <Text style={[styles.label, { color: tint }, focused && styles.labelOn]}>{meta.label}</Text>
+                  <Text style={[styles.label, { color: tint }]}>{meta.label}</Text>
                 </Pressable>
               );
             })}
@@ -177,11 +164,10 @@ const useStyles = makeStyles((C) => ({
     top: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: C.ink,
+    backgroundColor: C.popFace,
     borderRadius: ITEM_RADIUS,
     borderCurve: 'continuous',
   },
   item: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3, paddingVertical: 8 },
-  label: { fontFamily: Fonts.medium, fontSize: 11, letterSpacing: 0.1 },
-  labelOn: { fontFamily: Fonts.semibold },
+  label: { fontFamily: Fonts.bold, fontSize: 11, letterSpacing: 0.1 },
 }));
