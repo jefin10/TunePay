@@ -72,7 +72,7 @@ export function Features() {
           <h2 className="section-title mt-5">
             Everything a UPI app does.
             <br />
-            <span className="text-slate-400">Plus the part where you just ask.</span>
+            <span className="text-mute">Plus the part where you just ask.</span>
           </h2>
         </div>
 
@@ -93,8 +93,8 @@ export function Features() {
                       <path d={f.icon} />
                     </svg>
                   </span>
-                  <span className="mt-5 block text-lg font-semibold text-white">{f.title}</span>
-                  <span className="mt-2 block text-sm leading-relaxed text-slate-400">{f.body}</span>
+                  <span className="mt-5 block text-lg font-bold text-chalk">{f.title}</span>
+                  <span className="mt-2 block text-sm leading-relaxed text-mute">{f.body}</span>
                 </button>
               </li>
             ))}

@@ -110,11 +110,11 @@ export function Showcase() {
               <div
                 className={`showcase-card ${i === active ? "is-active" : ""} lg:mx-[max(2rem,calc((100vw-80rem)/2+2rem))]`}
               >
-                <span className="font-mono text-sm text-violet-300">{s.kicker}</span>
-                <h3 className="mt-3 text-2xl font-semibold tracking-tight text-white sm:text-3xl">
+                <span className="font-mono text-sm text-mint">{s.kicker}</span>
+                <h3 className="mt-3 text-2xl font-bold tracking-tight text-chalk sm:text-3xl">
                   {s.title}
                 </h3>
-                <p className="mt-3 leading-relaxed text-slate-300">{s.body}</p>
+                <p className="mt-3 leading-relaxed text-chalk-dim">{s.body}</p>
               </div>
             </article>
           ))}

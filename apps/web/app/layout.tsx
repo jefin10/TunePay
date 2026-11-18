@@ -1,9 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Fraunces, JetBrains_Mono, Manrope } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin"],
+});
+
+const display = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
 });
 
@@ -13,7 +18,7 @@ const mono = JetBrains_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#0B0F19",
+  themeColor: "#0b0b0b",
   colorScheme: "dark",
 };
 
@@ -59,7 +64,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${mono.variable} h-full scroll-smooth antialiased`}
+      className={`${manrope.variable} ${display.variable} ${mono.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full">{children}</body>
     </html>
