@@ -1,22 +1,21 @@
-import { Closing } from "./components/Closing";
-import { Features } from "./components/Features";
-import { Hero } from "./components/Hero";
-import { Nav } from "./components/Nav";
-import { Showcase } from "./components/Showcase";
-import { UnderTheHood } from "./components/UnderTheHood";
+import { CtaPanel } from "./components/home/CtaPanel";
+import { Divider } from "./components/home/Divider";
+import { HeroWalk } from "./components/home/HeroWalk";
+import { IsThisYou } from "./components/home/IsThisYou";
+import { NoTyping } from "./components/home/NoTyping";
+import { SimpleGrid } from "./components/home/SimpleGrid";
+import { VoiceSection } from "./components/home/VoiceSection";
 
 export default function Home() {
   return (
-    <div id="top" className="relative overflow-x-clip">
-      <div aria-hidden className="page-grid" />
-      <Nav />
-      <main>
-        <Hero />
-        <Features />
-        <Showcase />
-        <UnderTheHood />
-        <Closing />
-      </main>
-    </div>
+    <main>
+      <HeroWalk />
+      <Divider />
+      <VoiceSection />
+      <IsThisYou />
+      <NoTyping />
+      <SimpleGrid />
+      <CtaPanel />
+    </main>
   );
 }

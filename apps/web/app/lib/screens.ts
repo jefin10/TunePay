@@ -23,3 +23,5 @@ export const APK_URL =
   "https://github.com/jefin10/TunePay/releases/latest/download/app-release.apk";
 
 export const REPO_URL = "https://github.com/jefin10/TunePay";
+
+export const ISSUES_URL = `${REPO_URL}/issues`;
