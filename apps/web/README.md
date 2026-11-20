@@ -11,7 +11,7 @@ npm run build
 npm run lint
 ```
 
-Pages: `app/page.tsx` (home), `app/features/page.tsx` and `app/about/page.tsx`. The nav, footer and floating download bar are in `app/layout.tsx`. App screenshots are in `public/screens/`, logos in `public/`.
+Pages: `app/page.tsx` (home), `app/features/page.tsx` and `app/about/page.tsx`. The nav, footer and floating download bar are in `app/layout.tsx`. App screenshots are in `public/app-screens/`, logos in `public/`.
 
 ## Motion
 

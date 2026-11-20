@@ -23,7 +23,7 @@ The platform supports manual and voice-first payment interactions. Voice input i
   <tr>
     <td align="center"><img src="docs/screenshots/home.png" width="160" alt="Home"><br><sub>Home</sub></td>
     <td align="center"><img src="docs/screenshots/history.png" width="160" alt="History"><br><sub>History</sub></td>
-    <td align="center"><img src="docs/screenshots/pay-phone.png" width="160" alt="Pay a phone number"><br><sub>Pay a phone number</sub></td>
+    <td align="center"><img src="docs/screenshots/pay-upi.png" width="160" alt="Pay a UPI ID"><br><sub>Pay a UPI ID</sub></td>
     <td align="center"><img src="docs/screenshots/payment-sent.png" width="160" alt="Payment sent"><br><sub>Payment sent</sub></td>
     <td align="center"><img src="docs/screenshots/voice.png" width="160" alt="Voice"><br><sub>Voice</sub></td>
   </tr>

@@ -31,7 +31,7 @@ export function SimpleGrid() {
         </div>
 
         <div className="sg-phonecard" data-reveal="grid" style={delay(300)}>
-          <Device className="sg-phone" shots={["contacts"]} sizes="300px" />
+          <Device className="sg-phone" shots={["upi"]} sizes="300px" />
         </div>
 
         <div className="sg-card" data-reveal="grid" style={delay(600)}>

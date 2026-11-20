@@ -1,18 +1,19 @@
 /**
- * Real screenshots of the TunePay app (1080×2400), shown inside the 3D
- * phone. Files live in public/screens/.
+ * Real screenshots of the current TunePay app, captured on a phone with the
+ * demo account (Arjun Nair) and resized to 640×1422. Files live in
+ * public/app-screens/.
  */
 export const SCREENS = {
-  home: { src: "/screens/home.webp", alt: "TunePay home screen with balance and quick pay" },
-  voice: { src: "/screens/voice.webp", alt: "TunePay voice tab with a large tap-to-speak button" },
-  listening: { src: "/screens/listening.webp", alt: "Voice pay screen ready for a command" },
-  contacts: { src: "/screens/contacts.webp", alt: "Paying a contact from the phone's address book" },
-  pay: { src: "/screens/pay.webp", alt: "Voice payment confirmation with an editable amount" },
-  success: { src: "/screens/success.webp", alt: "Payment sent confirmation" },
-  scan: { src: "/screens/scan.webp", alt: "Scan and pay with the camera" },
-  requests: { src: "/screens/requests.webp", alt: "Money requests with pay and decline actions" },
-  history: { src: "/screens/history.webp", alt: "Transaction history with filters" },
-  security: { src: "/screens/security.webp", alt: "Security settings with biometric lock" },
+  home: { src: "/app-screens/home.webp", alt: "TunePay home screen with balance, quick pay and voice pay" },
+  voice: { src: "/app-screens/voice.webp", alt: "TunePay voice tab with a large tap-to-speak button" },
+  listening: { src: "/app-screens/listening.webp", alt: "Voice pay screen with example commands, ready to listen" },
+  upi: { src: "/app-screens/upi.webp", alt: "Paying a UPI ID with the recipient verified before you pay" },
+  pay: { src: "/app-screens/pay.webp", alt: "Voice payment confirmation with an editable amount" },
+  success: { src: "/app-screens/success.webp", alt: "Payment sent confirmation" },
+  scan: { src: "/app-screens/scan.webp", alt: "Scan and pay with the camera" },
+  requests: { src: "/app-screens/requests.webp", alt: "Money requests with pay and decline actions" },
+  history: { src: "/app-screens/history.webp", alt: "Transaction history with filters" },
+  security: { src: "/app-screens/security.webp", alt: "Security settings with biometric lock" },
 } as const;
 
 export type ScreenId = keyof typeof SCREENS;
