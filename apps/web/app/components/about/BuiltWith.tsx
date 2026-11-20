@@ -25,7 +25,7 @@ const PARTS = [
   },
 ];
 
-/** How it's built — four rows that rise in on scroll. */
+/** How it's built: four rows that rise in on scroll. */
 export function BuiltWith() {
   return (
     <section id="built-with" className="scroll-mt-24 px-[var(--pad-x)] py-24" aria-labelledby="bw-title">

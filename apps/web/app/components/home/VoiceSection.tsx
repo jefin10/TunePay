@@ -24,7 +24,7 @@ const BARS: [number, number, number][] = [
 /**
  * The long gradient section (study §7.4, §7.6): the ground runs from the
  * canvas into mint, the logo's sound wave stands in silhouette, and four
- * phrases swap in place as you scroll — each rising 20px as it appears.
+ * phrases swap in place as you scroll, each rising 20px as it appears.
  * Two glow blobs breathe in between 20% and 50% of the passage.
  */
 export function VoiceSection() {

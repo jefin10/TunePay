@@ -20,7 +20,7 @@ const description =
   "TunePay is a voice-first UPI payments app: say who and how much, check it, and confirm with your fingerprint.";
 
 export const metadata: Metadata = {
-  title: { default: "TunePay — say it, it's paid", template: "%s · TunePay" },
+  title: { default: "TunePay: say it, it's paid", template: "%s · TunePay" },
   description,
   applicationName: "TunePay",
   icons: {

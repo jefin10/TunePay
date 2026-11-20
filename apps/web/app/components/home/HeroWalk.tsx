@@ -61,7 +61,7 @@ const EXPANDED = 300;
  *
  * One scrubbed timeline runs from the top of the page to the end of the
  * pinned block: first the hero phone zooms out (1.5 → 1, y −70 → 0), then
- * three steps play — the left item rises from +300px and expands, the
+ * three steps play: the left item rises from +300px and expands, the
  * right copy swaps, and the phone crossfades to that step's screen.
  */
 export function HeroWalk() {

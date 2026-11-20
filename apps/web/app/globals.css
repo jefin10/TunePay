@@ -192,7 +192,7 @@ html.js [data-reveal].is-revealed {
   transform: translateY(0);
 }
 
-/* Ghost button — the alpha ladder 20 → 30 on hover. */
+/* Ghost button: the alpha ladder 20 → 30 on hover. */
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -439,7 +439,7 @@ html.js [data-reveal].is-revealed {
 }
 
 /* ---------------------------------------------------------------------------
- * Device — a flat phone frame for the app screenshots.
+ * Device: a flat phone frame for the app screenshots.
  * ------------------------------------------------------------------------- */
 .device {
   --w: var(--device-w, 290px);
@@ -598,7 +598,7 @@ html.js [data-reveal].is-revealed {
 }
 
 /* ---------------------------------------------------------------------------
- * HOME — hero + sticky walk (study §7.1, §7.2)
+ * HOME: hero + sticky walk (study §7.1, §7.2)
  * ------------------------------------------------------------------------- */
 .hero {
   position: relative;
@@ -859,7 +859,7 @@ html.js .walk-text {
 }
 
 /* ---------------------------------------------------------------------------
- * HOME — voice section: phrase swap over a gradient (study §7.4, §7.6)
+ * HOME: voice section: phrase swap over a gradient (study §7.4, §7.6)
  * ------------------------------------------------------------------------- */
 .voice {
   position: relative;
@@ -948,7 +948,7 @@ html.js .voice-phrase:not(:first-child) {
 }
 
 /* ---------------------------------------------------------------------------
- * HOME — "Is this you?" marquee (study §8.1)
+ * HOME: "Is this you?" marquee (study §8.1)
  * ------------------------------------------------------------------------- */
 .ity {
   padding: clamp(5rem, 12vh, 8rem) 0 clamp(5rem, 14vh, 9rem);
@@ -1011,7 +1011,7 @@ html.js .voice-phrase:not(:first-child) {
 }
 
 /* ---------------------------------------------------------------------------
- * HOME — "No ___" big-text swap (study §7.7)
+ * HOME: "No ___" big-text swap (study §7.7)
  * ------------------------------------------------------------------------- */
 .nt {
   position: relative;
@@ -1103,7 +1103,7 @@ html.js .nt-word:not(:first-child) {
 }
 
 /* ---------------------------------------------------------------------------
- * HOME — three-column grid (study §7.5)
+ * HOME: three-column grid (study §7.5)
  * ------------------------------------------------------------------------- */
 .sg {
   padding: clamp(5rem, 12vh, 8rem) var(--pad-x) clamp(4rem, 10vh, 7rem);
@@ -1293,7 +1293,7 @@ html.js .nt-word:not(:first-child) {
   }
 }
 
-/* Floating download bar (study §8.5 — fades in 3s late). */
+/* Floating download bar (study §8.5, fades in 3s late). */
 .dlbar {
   position: fixed;
   right: 1rem;
@@ -1415,7 +1415,7 @@ html.js .nt-word:not(:first-child) {
 }
 
 /* ---------------------------------------------------------------------------
- * Page heroes with drifting tiles (study §7.11) — features + about
+ * Page heroes with drifting tiles (study §7.11): features + about
  * ------------------------------------------------------------------------- */
 .ph {
   position: relative;
@@ -1491,7 +1491,7 @@ html.js .nt-word:not(:first-child) {
 }
 
 /* ---------------------------------------------------------------------------
- * FEATURES — the card pile that lifts off (study §7.8)
+ * FEATURES: the card pile that lifts off (study §7.8)
  * ------------------------------------------------------------------------- */
 .pile {
   position: relative;
@@ -1557,7 +1557,7 @@ html.js .nt-word:not(:first-child) {
   overflow: visible;
 }
 
-/* FEATURES — cards whose illustration assembles on hover (study §5.5) */
+/* FEATURES: cards whose illustration assembles on hover (study §5.5) */
 .fgrid {
   display: grid;
   gap: 1.25rem;
@@ -1702,7 +1702,7 @@ html.js .nt-word:not(:first-child) {
 }
 
 /* ---------------------------------------------------------------------------
- * ABOUT — crossfade tiles (study §5.7) and scale-on-scroll (§7.9)
+ * ABOUT: crossfade tiles (study §5.7) and scale-on-scroll (§7.9)
  * ------------------------------------------------------------------------- */
 .swap-tile {
   position: relative;

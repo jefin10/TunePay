@@ -42,7 +42,7 @@ const CARDS: Card[] = [
 ];
 
 /**
- * "Everything a payment needs" — three tossed cards sit on the headline and
+ * "Everything a payment needs": three tossed cards sit on the headline and
  * lift off the pile one after another as you scroll (study §7.8).
  */
 export function CardPile() {

@@ -9,7 +9,7 @@ export function DownloadBar() {
       <span className="dlbar-mark">
         <LogoMark />
       </span>
-      TunePay for Android — free
+      TunePay free on Android
     </a>
   );
 }

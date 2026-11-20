@@ -48,7 +48,7 @@ function Pill({ said, hidden }: { said: Said; hidden?: boolean }) {
 }
 
 /**
- * "Is this you?" — three rows of the things people say about paying,
+ * "Is this you?": three rows of the things people say about paying,
  * looping at different speeds and directions (study §8.1). Each row is
  * the content twice, translated by exactly one copy so the loop is seamless.
  */
